@@ -211,6 +211,8 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .tip{margin-top:12px;background:var(--warnbg);border:2px solid var(--warnline);border-radius:12px;
   padding:11px 12px;font-size:13.5px;line-height:1.5;color:var(--warn);font-weight:600}
 .hintbtn{background:none;border:none;font:800 14px/1 inherit;color:var(--blue);padding:18px 0 0;cursor:pointer}
+.linkrow{display:flex;gap:8px;margin-top:16px}
+.linkrow>.btn{flex:1;min-width:0}
 .hintbox{margin-top:16px;background:var(--surf2);border:2px solid var(--line);border-left:6px solid var(--blue);
   border-radius:10px;padding:11px 12px;font-size:13.5px;line-height:1.5;color:var(--ink2);font-weight:500}
 
@@ -298,20 +300,46 @@ function fmt(v){if(v===null||v===undefined||isNaN(v))return '—';
   return (neg?'\u2212':'')+p.join(',');}
 function fmtMs(ms){var s=Math.max(0,Math.round(ms/1000));var m=Math.floor(s/60),r=s%60;
   return m+':'+(r<10?'0':'')+r;}
-function parseNum(raw){
-  if(raw===null||raw===undefined)return null;
+/* Разбор введённого числа возвращает ВСЕ правдоподобные прочтения, а не одно:
+   «120,000» это и 120000, и 120; «1,200» это и 1200, и 1,2; «12,5» только 12,5.
+   Дальше сравниваем с ожидаемым ответом — так верная запись не ломается. */
+function readings(raw){
+  var res=[];
+  if(raw===null||raw===undefined)return res;
   var s=String(raw).trim().toLowerCase();
-  if(!s)return null;
-  s=s.replace(/\u00a0/g,' ').replace(/\s+/g,'').replace(',','.');
+  if(!s)return res;
+  s=s.replace(/\u00a0/g,' ').replace(/\s+/g,'').replace(/[\u20bd$\u20ac\u00a3%]/g,'');
   var mult=1;
   if(/(млрд|bn)$/.test(s)){mult=1e9;s=s.replace(/(млрд|bn)$/,'');}
   else if(/(млн|kk|mm|m)$/.test(s)){mult=1e6;s=s.replace(/(млн|kk|mm|m)$/,'');}
   else if(/(тыс|k)$/.test(s)){mult=1e3;s=s.replace(/(тыс|k)$/,'');}
-  s=s.replace(/[\u20bd$\u20ac\u00a3%]/g,'');
-  if(!/^[0-9.+\-]+$/.test(s))return null;
-  var v=parseFloat(s);
-  if(isNaN(v))return null;
-  return v*mult;
+  if(!/^[+\-]?[0-9.,]+$/.test(s))return res;
+  var sign=(s.charAt(0)==='-')?-1:1;
+  s=s.replace(/^[+\-]/,'');
+  var push=function(t){var v=parseFloat(t);if(!isNaN(v)&&res.indexOf(v)<0)res.push(v);};
+  if(/^\d{1,3}([,.]\d{3})+$/.test(s))push(s.replace(/[,.]/g,''));   /* 120,000 / 1.200.000 — тысячи */
+  if(/^\d+$/.test(s))push(s);                                       /* целое */
+  var m;
+  if((m=s.match(/^(\d+)[.,](\d+)$/)))push(m[1]+'.'+m[2]);           /* 12,5 -> 12.5 ; 1,200 -> 1.2 */
+  if((m=s.match(/^(\d{1,3}(?:[.,]\d{3})+)[.,](\d+)$/)))push(m[1].replace(/[.,]/g,'')+'.'+m[2]);
+  for(var i=0;i<res.length;i++)res[i]=res[i]*mult*sign;
+  return res;
+}
+/* сколько знаков после запятой набрал человек — от этого зависит допуск на округление */
+function decimalsTyped(raw){
+  var t=String(raw||'').replace(/[\s\u00a0]/g,'').replace(/[^0-9.,]/g,'');
+  var k=Math.max(t.lastIndexOf(','),t.lastIndexOf('.'));
+  if(k<0)return 0;
+  var fr=t.slice(k+1);
+  return /^[0-9]+$/.test(fr)?Math.min(fr.length,3):0;
+}
+/* что считаем верным ответом: сама величина плюс равнозначные записи (процент <-> доля) */
+function candidates(q){
+  var c=[q.a].concat(q.alt||[]);
+  /* долю принимаем вместо процента только там, где вопрос не задаёт шкалу:
+     если в условии прямо сказано «в процентах», ответ долей остаётся ошибкой — это и есть навык */
+  if(!q.unit&&q.a!==0&&Math.abs(q.a)<1)c.push(q.a*100);
+  return c;
 }
 function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function ring(pct,color,size){
@@ -336,22 +364,32 @@ function dayKey(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
 function todayN(){var k=dayKey(new Date());return (ST.today&&ST.today.d===k)?(ST.today.n||0):0;}
 function bumpToday(){var k=dayKey(new Date());
   if(!ST.today||ST.today.d!==k)ST.today={d:k,n:0};ST.today.n++;save();}
-function record(q,ok,ms){
+function record(q,ok,ms,skipped){
   var s=ST.q[q.id]||{tries:0};
   s.tries=(s.tries||0)+1;
   if(s.first===undefined||s.first===null)s.first=!!ok;
   s.s=ok?'ok':'bad';s.ms=ms||0;s.ts=Date.now();
+  if(skipped)s.sk=(s.sk||0)+1;
   ST.q[q.id]=s;bumpToday();save();
 }
 function markDay(){var k=dayKey(new Date());if(ST.days.indexOf(k)<0){ST.days.push(k);save();}}
 function streak(){var set={};ST.days.forEach(function(d){set[d]=1;});
   var n=0,d=new Date();while(set[dayKey(d)]){n++;d.setDate(d.getDate()-1);}return n;}
 function checkNum(q,raw){
-  var v=parseNum(raw);if(v===null)return{invalid:true};
-  var cand=[q.a].concat(q.alt||[]);
-  var tol=(q.tol!==undefined&&q.tol!==null)?q.tol:Math.max(Math.abs(q.a)*0.005,0.005);
-  for(var i=0;i<cand.length;i++){if(Math.abs(v-cand[i])<=tol)return{ok:true,v:v};}
-  return{ok:false,v:v};
+  var rs=readings(raw);
+  if(!rs.length)return{invalid:true};
+  var cand=candidates(q);
+  var baseTol=(q.tol!==undefined&&q.tol!==null)?q.tol:Math.max(Math.abs(q.a)*0.015,0.01);
+  /* если человек округлил корректно, принимаем округление: «31» для 31,25 проходит,
+     а «1» для 0,8 — нет, потому что шаг округления слишком грубый относительно величины */
+  var step=0.5*Math.pow(10,-decimalsTyped(raw));
+  for(var i=0;i<cand.length;i++){
+    var c=cand[i];
+    var tol=Math.max(baseTol,baseTol/Math.max(Math.abs(q.a),1e-9)*Math.abs(c));
+    var roundTol=(step<=Math.max(tol,0.05*Math.abs(c)))?step:0;
+    for(var j=0;j<rs.length;j++){if(Math.abs(rs[j]-c)<=tol+roundTol)return{ok:true,v:rs[j]};}
+  }
+  return{ok:false,v:rs[0]};
 }
 
 /* ---------- nav ---------- */
@@ -397,11 +435,11 @@ function viewHome(){
    +(tn>=DAILY?'Ещё тренировка':'Начать тренировку')+'</button></div>';
   if(bads.length)h+='<div style="margin-top:10px"><button class="btn sec" onclick="A.retry()">'
    +'Разобрать ошибки · '+bads.length+'</button></div>';
-  h+='<div class="stats"><div><b>'+g.m+'</b><span>освоено</span></div>'
+  h+='<div class="stats"><div><b>'+g.m+'</b><span>с 1-й попытки</span></div>'
    +'<div><b>'+g.ok+'</b><span>решено</span></div>'
    +'<div><b class="'+(g.bad?'r':'')+'">'+g.bad+'</b><span>на повтор</span></div></div>';
   BANK.modules.forEach(function(m){
-    var tot=0,mst=0;m.types.forEach(function(t){var s=tStat(t);tot+=s.total;mst+=s.m;});
+    var tot=0,mst=0;m.types.forEach(function(t){var s=tStat(t);tot+=s.total;mst+=s.ok;});
     h+='<div class="mod" style="'+accentStyle(m)+'">';
     h+='<div class="mod-h"><span class="mod-dot"></span><span class="mod-t">'+esc(m.title)+'</span>'
      +'<span class="mod-c">'+mst+'/'+tot+'</span></div><div class="tiles">';
@@ -409,8 +447,8 @@ function viewHome(){
       var s=tStat(t);
       h+='<button class="tile" onclick="A.open(\''+t.id+'\')"><span class="num">'+esc(t.num)+'</span>';
       if(s.bad>0)h+='<span class="st">'+s.bad+'</span>';
-      else if(s.m===s.total&&s.total)h+='<span class="st ok">✓</span>';
-      h+='<span class="nm">'+esc(t.title)+'</span><span class="cnt">'+s.m+' из '+s.total+'</span></button>';
+      else if(s.ok===s.total&&s.total)h+='<span class="st ok">✓</span>';
+      h+='<span class="nm">'+esc(t.title)+'</span><span class="cnt">'+s.ok+' из '+s.total+'</span></button>';
     });
     h+='</div></div>';
   });
@@ -435,7 +473,7 @@ function viewType(){
   var h='<div class="wrap" style="'+accentStyle(m)+'">';
   h+='<div class="thero"><span class="bd">'+esc(t.num)+'</span>'
    +'<h2>'+esc(t.title)+'</h2>'
-   +'<div class="sub">Освоено '+s.m+' из '+s.total+(s.bad?' · на повтор '+s.bad:'')+'</div>'
+   +'<div class="sub">Решено '+s.ok+' из '+s.total+' · с первой попытки '+s.m+(s.bad?' · на повтор '+s.bad:'')+'</div>'
    +'<div class="track"><i style="width:'+pct+'%"></i></div></div>';
   h+='<button class="btn" onclick="A.start(\''+t.id+'\')">Тренировать · '+t.qs.length+'</button>';
   h+='<div style="margin-top:10px">'+(s.bad>0
@@ -502,8 +540,12 @@ function viewPrac(){
     }
   }
   if(!S.answered&&!S.revealed){
-    if(!S.hint)h+='<button class="hintbtn" onclick="A.hint()">Подсказка</button>';
-    else h+='<div class="hintbox">'+esc(q.hint||c.t.method[0])+'</div>';
+    if(S.badInput)h+='<div class="tip" style="margin-top:14px">Не разобрал число. Набери цифрами: <b>120000</b>, <b>1,5</b> или коротко <b>120k</b>.</div>';
+    if(S.hint)h+='<div class="hintbox">'+esc(q.hint||c.t.method[0])+'</div>';
+    h+='<div class="linkrow">';
+    if(!S.hint)h+='<button class="btn link" onclick="A.hint()">Подсказка</button>';
+    if(q.kind!=='open')h+='<button class="btn link" onclick="A.dontKnow()">Не знаю</button>';
+    h+='</div>';
   }
   if(S.answered)h+=solCard(c);
   h+='</div></div>';
@@ -530,6 +572,11 @@ function solCard(c){
 function ansLine(c){
   var q=c.q;
   var right=fmt(q.a)+(q.unit?' '+esc(q.unit):'');
+  if(S.skipped){
+    if(q.kind==='num')return 'Верно: <b>'+right+'</b>';
+    if(q.kind==='mc')return 'Верно: <b>'+String.fromCharCode(65+q.correct)+'. '+esc(q.opts[q.correct])+'</b>';
+    return 'Задача вернётся на повтор';
+  }
   if(q.kind==='num')return S.ok?('Ответ: <b>'+right+'</b>'):('Твой: <b>'+esc(S.user||'—')+'</b> · верно <b>'+right+'</b>');
   if(q.kind==='mc')return 'Верно: <b>'+String.fromCharCode(65+q.correct)+'. '+esc(q.opts[q.correct])+'</b>';
   return 'Самооценка: '+(S.ok?'справился':'нужно повторить');
@@ -538,11 +585,12 @@ function footPrac(){
   var c=cur();if(!c)return '';
   var q=c.q;
   if(S.answered){
-    var ok=S.ok;
-    var acc=ok?'var(--ok)':'var(--no)', on=ok?'var(--ongreen)':'#FFFFFF';
+    var ok=S.ok, skip=!!S.skipped;
+    var acc=skip?'var(--warn)':(ok?'var(--ok)':'var(--no)');
+    var on=skip?(THEME==='light'?'#FFFFFF':'#131F24'):(ok?'var(--ongreen)':'#FFFFFF');
     return '<div class="fin" style="--acc:'+acc+';--on:'+on+'">'
-     +'<div class="fbh"><div class="ic">'+(ok?'✓':'✕')+'</div>'
-     +'<div class="tx"><div class="t">'+(ok?'Верно':'Неверно')+'</div><div class="a">'+ansLine(c)+'</div></div></div>'
+     +'<div class="fbh"><div class="ic">'+(skip?'!':(ok?'✓':'✕'))+'</div>'
+     +'<div class="tx"><div class="t">'+(skip?'Пропущено':(ok?'Верно':'Неверно'))+'</div><div class="a">'+ansLine(c)+'</div></div></div>'
      +'<button class="btn" style="--acc:var(--green);--accl:var(--greenl);--on:var(--ongreen)" onclick="A.next()">'
      +(S.idx+1>=S.list.length?'Завершить':'Дальше')+'</button></div>';
   }
@@ -621,7 +669,7 @@ window.A={
   run:function(list,mode,startAt){
     if(!list.length)return;
     S={list:list,idx:startAt||0,mode:mode,answered:false,ok:null,user:'',pick:null,val:'',hint:false,revealed:false,
-       done:0,correct:0,wrong:[],startedAt:Date.now(),taskStart:Date.now(),endedAt:null,
+       skipped:false,badInput:false,done:0,correct:0,wrong:[],startedAt:Date.now(),taskStart:Date.now(),endedAt:null,
        deadline:(mode==='drill')?Date.now()+20*60*1000:null};
     screen='practice';render();
   },
@@ -654,7 +702,7 @@ window.A={
     if(k==='del')v=v.slice(0,-1);
     else if(k===','){if(v.indexOf(',')<0&&v.indexOf('.')<0)v=v+',';}
     else if(v.length<14)v=v+k;
-    S.val=v;render();
+    S.val=v;S.badInput=false;render();
   },
   pick:function(i){if(!S||S.answered)return;S.pick=(S.pick===i?null:i);render();},
   check:function(){
@@ -662,19 +710,27 @@ window.A={
     if(c.q.kind==='num'){
       if(!S.val)return;
       var r=checkNum(c.q,S.val);
-      if(r.invalid)return;
+      if(r.invalid){S.badInput=true;render();return;}
       A.finish(!!r.ok,S.val);
     } else if(c.q.kind==='mc'){
       if(S.pick===null||S.pick===undefined)return;
       A.finish(S.pick===c.q.correct,String.fromCharCode(65+S.pick)+'. '+c.q.opts[S.pick]);
     }
   },
+  /* «не знаю» — честный сигнал вместо угадывания: показываем решение, задача уходит в повтор */
+  dontKnow:function(){
+    var c=cur();if(!c||S.answered)return;
+    S.answered=true;S.ok=false;S.user='';S.skipped=true;S.badInput=false;
+    record(c.q,false,Date.now()-S.taskStart,true);
+    S.done++;S.wrong.push(c.q.id);
+    render();
+  },
   reveal:function(){var el=document.getElementById('ans');if(el&&S)S.val=el.value;if(S)S.revealed=true;render();},
   selfGood:function(){A.finish(true,S.val);},
   selfBad:function(){A.finish(false,S.val);},
   finish:function(ok,user){
     var c=cur();if(!c||S.answered)return;
-    S.answered=true;S.ok=ok;S.user=user||'';
+    S.answered=true;S.ok=ok;S.user=user||'';S.skipped=false;S.badInput=false;
     record(c.q,ok,Date.now()-S.taskStart);
     S.done++;if(ok)S.correct++;else S.wrong.push(c.q.id);
     render();
@@ -682,7 +738,8 @@ window.A={
   next:function(){
     if(!S)return;
     if(S.idx+1>=S.list.length){S.endedAt=Date.now();screen='summary';markDay();render();return;}
-    S.idx++;S.answered=false;S.ok=null;S.user='';S.pick=null;S.val='';S.hint=false;S.revealed=false;S.taskStart=Date.now();
+    S.idx++;S.answered=false;S.ok=null;S.user='';S.pick=null;S.val='';S.hint=false;S.revealed=false;
+    S.skipped=false;S.badInput=false;S.taskStart=Date.now();
     render();
   }
 };
