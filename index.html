@@ -357,6 +357,13 @@ function isMas(q){var s=ST.q[q.id];return !!(s&&s.s==='ok'&&s.first);}
 function isBad(q){var s=ST.q[q.id];return !!(s&&s.s==='bad');}
 function tStat(t){var o=0,m=0,b=0;t.qs.forEach(function(q){
   if(isOk(q)){o++;if(isMas(q))m++;}else if(isBad(q))b++;});return{ok:o,m:m,bad:b,total:t.qs.length};}
+/* вес типа для тренировки: слабые темы получают больше слотов */
+function typeWeight(t){
+  var s=tStat(t),seen=s.ok+s.bad;
+  var err=seen?(s.bad/seen):0.5;
+  var mastery=s.total?(s.ok/s.total):0;
+  return 0.35+(1-mastery)+err*0.8;
+}
 function gStat(){var o=0,m=0,b=0;ALLQ.forEach(function(q){
   if(isOk(q)){o++;if(isMas(q))m++;}else if(isBad(q))b++;});return{ok:o,m:m,bad:b,total:TOTALQ};}
 function badList(){return ALLQ.filter(isBad);}
@@ -364,12 +371,15 @@ function dayKey(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
 function todayN(){var k=dayKey(new Date());return (ST.today&&ST.today.d===k)?(ST.today.n||0):0;}
 function bumpToday(){var k=dayKey(new Date());
   if(!ST.today||ST.today.d!==k)ST.today={d:k,n:0};ST.today.n++;save();}
-function record(q,ok,ms,skipped){
+function record(q,ok,ms,skipped,noHint){
   var s=ST.q[q.id]||{tries:0};
   s.tries=(s.tries||0)+1;
   if(s.first===undefined||s.first===null)s.first=!!ok;
   s.s=ok?'ok':'bad';s.ms=ms||0;s.ts=Date.now();
   if(skipped)s.sk=(s.sk||0)+1;
+  var clean=!!ok&&!skipped&&!!noHint;
+  if(clean)s.lv=Math.min((s.lv||0)+1,INT.length);else s.lv=0;
+  s.due=dayNum()+(clean?INT[s.lv-1]:1);
   ST.q[q.id]=s;bumpToday();save();
 }
 function markDay(){var k=dayKey(new Date());if(ST.days.indexOf(k)<0){ST.days.push(k);save();}}
@@ -394,6 +404,15 @@ function checkNum(q,raw){
 
 /* ---------- nav ---------- */
 var screen='home',typeId=null,S=null,accTheory=false,accProto=false,lastNav=null,DAILY=12;
+/* Интервальное повторение. Отвечено верно без подсказки — интервал растёт;
+   ошибка, пропуск или ответ с подсказкой — интервал сбрасывается на сутки. */
+var INT=[1,2,4,7];
+function dayNum(){var n=new Date();return Math.floor((n.getTime()-n.getTimezoneOffset()*60000)/86400000);}
+function isDue(q){var s=ST.q[q.id];if(!s)return false;
+  if(s.s!=='ok')return true;                       /* ошибка или пропуск — к повтору сразу */
+  return s.due!==undefined&&s.due<=dayNum();}       /* верный ответ возвращается по расписанию */
+function dueList(){return ALLQ.filter(isDue).sort(function(a,b){
+  return (ST.q[a.id].due||0)-(ST.q[b.id].due||0);});}
 function cur(){if(!S)return null;var it=S.list[S.idx];if(!it)return null;var t=TBY[it.tid];
   if(!t)return null;return{t:t,q:t.qs[it.qi]};}
 
@@ -433,11 +452,12 @@ function viewHome(){
      :(tn?('Сегодня '+tn+' из '+DAILY+' · осталось '+(DAILY-tn)):'Микс из всех типов, слабые места первыми'))+'</div></div>';
   h+='<div style="margin-top:12px"><button class="btn" onclick="A.drill()">'
    +(tn>=DAILY?'Ещё тренировка':'Начать тренировку')+'</button></div>';
-  if(bads.length)h+='<div style="margin-top:10px"><button class="btn sec" onclick="A.retry()">'
-   +'Разобрать ошибки · '+bads.length+'</button></div>';
-  h+='<div class="stats"><div><b>'+g.m+'</b><span>с 1-й попытки</span></div>'
-   +'<div><b>'+g.ok+'</b><span>решено</span></div>'
-   +'<div><b class="'+(g.bad?'r':'')+'">'+g.bad+'</b><span>на повтор</span></div></div>';
+  var dueN=dueList().length;
+  if(dueN)h+='<div style="margin-top:10px"><button class="btn sec" onclick="A.review()">'
+   +'Повторить по расписанию · '+dueN+'</button></div>';
+  h+='<div class="stats"><div><b>'+g.ok+'</b><span>решено</span></div>'
+   +'<div><b class="'+(dueN?'r':'')+'">'+dueN+'</b><span>к повтору</span></div>'
+   +'<div><b>'+g.m+'</b><span>с 1-й попытки</span></div></div>';
   BANK.modules.forEach(function(m){
     var tot=0,mst=0;m.types.forEach(function(t){var s=tStat(t);tot+=s.total;mst+=s.ok;});
     h+='<div class="mod" style="'+accentStyle(m)+'">';
@@ -541,7 +561,7 @@ function viewPrac(){
   }
   if(!S.answered&&!S.revealed){
     if(S.badInput)h+='<div class="tip" style="margin-top:14px">Не разобрал число. Набери цифрами: <b>120000</b>, <b>1,5</b> или коротко <b>120k</b>.</div>';
-    if(S.hint)h+='<div class="hintbox">'+esc(q.hint||c.t.method[0])+'</div>';
+    if(S.hint)h+='<div class="hintbox">'+esc(q.hint||(BANK.hints&&BANK.hints[q.id])||c.t.method[0])+'</div>';
     h+='<div class="linkrow">';
     if(!S.hint)h+='<button class="btn link" onclick="A.hint()">Подсказка</button>';
     if(q.kind!=='open')h+='<button class="btn link" onclick="A.dontKnow()">Не знаю</button>';
@@ -675,22 +695,45 @@ window.A={
   },
   retry:function(){var b=badList();if(!b.length)return;
     A.run(shuffle(b.map(function(q){return{tid:q._t.id,qi:q._i};})),'type');},
+  /* повтор по расписанию: сначала самые просроченные */
+  review:function(){
+    var d=dueList();
+    if(!d.length)return;
+    A.run(d.slice(0,20).map(function(q){return{tid:q._t.id,qi:q._i};}),'review');
+  },
   redoWrong:function(){if(!S||!S.wrong.length)return;var l=[];
     S.wrong.forEach(function(id){ALLQ.forEach(function(q){if(q.id===id)l.push({tid:q._t.id,qi:q._i});});});
     A.run(l,'type');},
   drill:function(){
-    var pool=ALLQ.slice();shuffle(pool);
-    function pri(q){var s=ST.q[q.id];if(!s)return 1;return s.s==='bad'?0:2;}
-    pool.sort(function(a,b){return pri(a)-pri(b);});
-    var pick=[],cnt={};
-    for(var lim=1;lim<=4&&pick.length<DAILY;lim++){
-      for(var i=0;i<pool.length&&pick.length<DAILY;i++){
-        var q=pool[i];if(pick.indexOf(q)>=0)continue;
-        var tid=q._t.id;if((cnt[tid]||0)>=lim)continue;
-        pick.push(q);cnt[tid]=(cnt[tid]||0)+1;
+    /* Три очереди: к повтору сейчас, ни разу не решённые, остальные.
+       Внутри очереди выбор взвешен по слабости темы, поэтому один тип
+       может получить несколько слотов, а сильные темы почти не мешают. */
+    var tiers=[[],[],[]];
+    ALLQ.forEach(function(q){
+      var s=ST.q[q.id];
+      var tier=isDue(q)?0:(s?2:1);
+      tiers[tier].push({q:q,w:typeWeight(q._t)});
+    });
+    var pick=[],cnt={},used={},CAP=3;
+    function take(arr,limit){
+      var pool=arr.slice();
+      while(pick.length<limit&&pool.length){
+        var total=0,i;
+        for(i=0;i<pool.length;i++)total+=pool[i].w;
+        var r=Math.random()*total,acc=0,idx=0;
+        for(i=0;i<pool.length;i++){acc+=pool[i].w;if(acc>=r){idx=i;break;}}
+        var c=pool.splice(idx,1)[0];
+        var tid=c.q._t.id;
+        if(used[c.q.id]||(cnt[tid]||0)>=CAP)continue;
+        used[c.q.id]=1;pick.push(c.q);cnt[tid]=(cnt[tid]||0)+1;
       }
     }
+    take(tiers[0],6);        /* не больше шести повторов, чтобы тренировка осталась миксом */
+    take(tiers[1],DAILY);
+    take(tiers[2],DAILY);
+    if(pick.length<DAILY)take(tiers[0],DAILY);   /* всё слабое — добираем из очереди повтора */
     if(!pick.length)return;
+    shuffle(pick);
     A.run(pick.map(function(q){return{tid:q._t.id,qi:q._i};}),'drill');
   },
   leave:function(){S=null;screen=typeId?'type':'home';render();},
@@ -721,7 +764,7 @@ window.A={
   dontKnow:function(){
     var c=cur();if(!c||S.answered)return;
     S.answered=true;S.ok=false;S.user='';S.skipped=true;S.badInput=false;
-    record(c.q,false,Date.now()-S.taskStart,true);
+    record(c.q,false,Date.now()-S.taskStart,true,false);
     S.done++;S.wrong.push(c.q.id);
     render();
   },
@@ -731,7 +774,7 @@ window.A={
   finish:function(ok,user){
     var c=cur();if(!c||S.answered)return;
     S.answered=true;S.ok=ok;S.user=user||'';S.skipped=false;S.badInput=false;
-    record(c.q,ok,Date.now()-S.taskStart);
+    record(c.q,ok,Date.now()-S.taskStart,false,!S.hint);
     S.done++;if(ok)S.correct++;else S.wrong.push(c.q.id);
     render();
   },
