@@ -178,7 +178,6 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .fml sup,.fml sub{font-size:.72em;line-height:0}
 
 /* ---------- in-question guidance and mistake explanations ---------- */
-.qguide{margin-top:10px;padding:9px 11px;border-left:4px solid var(--acc);background:var(--surf2);border-radius:0 9px 9px 0;font-size:13.5px;line-height:1.5;color:var(--ink2);font-weight:600}
 .mistake{margin-top:14px;background:var(--nobg);border:2px solid var(--noline);border-radius:12px;padding:12px 13px;color:var(--no)}
 .mistake .mt{font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px}
 .mistake p{font-size:13.5px;line-height:1.5;font-weight:600;margin-top:5px}
@@ -282,7 +281,6 @@ table.qt tr:last-child td{border-bottom:none}
 @media (max-width:380px){
   .wrap,.fin{padding-left:14px;padding-right:14px}
   .qtext{font-size:20px;line-height:1.34}
-  .qguide{font-size:13px}
   table.qt{table-layout:fixed}
   table.qt th{padding:7px 4px;font-size:9px;white-space:normal;overflow-wrap:anywhere}
   table.qt td{padding:7px 4px;font-size:11px;white-space:normal;overflow-wrap:anywhere}
@@ -296,7 +294,7 @@ table.qt tr:last-child td{border-bottom:none}
   <div id="foot"></div>
 </div>
 <script src="bank.js?v=1.1"></script>
-<script src="knowledge.js?v=1.1"></script>
+<script src="knowledge.js?v=1.2"></script>
 <script>
 (function(){
 "use strict";
@@ -559,7 +557,7 @@ function learnCard(t){
   var h='<section class="learn" aria-label="Объяснение темы">';
   h+='<div class="learn-kicker">С нуля, на пальцах</div><h3>'+esc(t.title)+'</h3>';
   h+='<p class="learn-plain">'+esc(k.plain)+'</p>';
-  if(k.cue)h+='<div class="learn-label">Как узнать этот тип</div><div class="learn-cue">'+esc(k.cue)+'</div>';
+  if(k.cue)h+='<div class="learn-label">Как понять, что это такая задача</div><div class="learn-cue">'+esc(k.cue)+'</div>';
   if(k.steps&&k.steps.length)h+='<div class="learn-label">Что делать по шагам</div><ol class="learn-list">'
     +k.steps.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>';
   if(k.example)h+='<div class="learn-label">Мини-пример с разбором</div><div class="learn-example"><div class="exq">'+esc(k.example.q)+'</div><ol>'
@@ -620,8 +618,6 @@ function viewPrac(){
   var q=c.q,m=c.t._m,h='';
   h+='<div class="wrap mid" style="'+accentStyle(m)+'"><div class="qwrap">';
   h+='<div class="qlabel">'+(q.kind==='open'?'Свободный ответ':q.kind==='mc'?'Выбери вариант':'Введи ответ')+'</div>';
-  var k=KNOWLEDGE[c.t.id];
-  if(k&&k.cue)h+='<div class="qguide"><b>Перед ответом:</b> '+esc(k.cue)+'</div>';
   h+='<div class="qtext">'+esc(q.t)+'</div>';
   if(q.table)h+='<div class="tw">'+tableHtml(q.table)+'</div>';
   if(q.kind==='num'){
