@@ -128,8 +128,9 @@ input,textarea{-webkit-user-select:text;user-select:text}
 
 /* ---------- accordion ---------- */
 .acc{margin-top:20px;background:var(--surf);border:2px solid var(--line);border-radius:16px;overflow:hidden}
-.acc>.ah{display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;font-size:14px;font-weight:800}
+.acc>.ah{display:flex;align-items:center;gap:10px;width:100%;padding:14px 16px;border:0;background:var(--surf);color:var(--ink);font-family:inherit;text-align:left;cursor:pointer;font-size:14px;font-weight:800}
 .acc>.ah:active{background:var(--surf2)}
+.acc>.ah:focus-visible{outline:3px solid var(--blue);outline-offset:-3px}
 .acc>.ah .chev{margin-left:auto;color:var(--ink3);font-size:16px;transition:transform .2s}
 .acc.open>.ah .chev{transform:rotate(90deg)}
 .acc>.ab{display:none;padding:4px 16px 16px;border-top:2px solid var(--line)}
@@ -152,6 +153,36 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .warns{list-style:none;padding:0}
 .warns li{position:relative;padding-left:20px;margin-bottom:8px;font-size:13.5px;line-height:1.5;color:var(--ink2);font-weight:500}
 .warns li:before{content:'';position:absolute;left:2px;top:7px;width:8px;height:8px;border-radius:99px;background:var(--warn)}
+
+/* ---------- beginner-first knowledge layer ---------- */
+.learn{margin:16px 0 22px;padding:2px 0 0}
+.learn-kicker{font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--acc);margin-bottom:6px}
+.learn h3{font-size:21px;line-height:1.25;font-weight:800;letter-spacing:-.25px;color:var(--ink);margin-bottom:9px}
+.learn-plain{font-size:16px;line-height:1.6;color:var(--ink);font-weight:500;margin-bottom:14px}
+.learn-label{font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--ink3);margin:17px 0 7px}
+.learn-cue{font-size:14px;line-height:1.55;color:var(--ink2);font-weight:600;background:var(--selbg);border-left:5px solid var(--acc);padding:10px 12px;border-radius:0 10px 10px 0}
+.learn-list{list-style:none;padding:0;counter-reset:learnstep}
+.learn-list li{position:relative;padding:0 0 10px 31px;font-size:14.5px;line-height:1.55;color:var(--ink2);font-weight:500;counter-increment:learnstep}
+.learn-list li:before{content:counter(learnstep);position:absolute;left:0;top:1px;width:22px;height:22px;border-radius:7px;background:var(--acc);color:var(--on);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.learn-example{background:var(--surf2);border:2px solid var(--line);border-radius:12px;padding:12px 13px}
+.learn-example .exq{font-size:15px;line-height:1.45;margin-bottom:8px}
+.learn-example ol{margin:0;padding-left:20px;font-size:14px;line-height:1.55;color:var(--ink2)}
+.learn-example ol li{margin-bottom:6px}
+.learn-voice{font-size:15px;line-height:1.55;color:var(--ink);font-weight:700;padding:11px 13px;background:var(--warnbg);border-left:5px solid var(--warn);border-radius:0 10px 10px 0}
+.learn-check{list-style:none;padding:0}
+.learn-check li{font-size:14px;line-height:1.5;color:var(--ink2);padding:4px 0 4px 25px;position:relative}
+.learn-check li:before{content:'□';position:absolute;left:0;top:1px;font-size:19px;line-height:1;color:var(--acc);font-weight:800}
+.formula-note{font-size:13.5px;line-height:1.5;color:var(--ink2);margin-bottom:8px}
+.fml{font:600 16px/1.45 "Cambria Math","STIX Two Math","DejaVu Serif",Georgia,serif;text-align:center;letter-spacing:0;background:var(--surf2);
+  border:2px solid var(--line);border-radius:10px;padding:11px 12px;margin-bottom:7px;color:var(--blue);overflow-x:auto;white-space:nowrap}
+.fml sup,.fml sub{font-size:.72em;line-height:0}
+
+/* ---------- in-question guidance and mistake explanations ---------- */
+.qguide{margin-top:10px;padding:9px 11px;border-left:4px solid var(--acc);background:var(--surf2);border-radius:0 9px 9px 0;font-size:13.5px;line-height:1.5;color:var(--ink2);font-weight:600}
+.mistake{margin-top:14px;background:var(--nobg);border:2px solid var(--noline);border-radius:12px;padding:12px 13px;color:var(--no)}
+.mistake .mt{font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px}
+.mistake p{font-size:13.5px;line-height:1.5;font-weight:600;margin-top:5px}
+.mistake b{font-weight:800}
 
 /* ---------- type screen ---------- */
 .thero{background:var(--surf);border:2px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
@@ -247,6 +278,15 @@ table.qt tr:last-child td{border-bottom:none}
 .wi .wig{flex:0 0 auto;font-size:10.5px;font-weight:800;color:var(--ink3);background:var(--surf2);
   border-radius:6px;padding:3px 6px}
 .wi .wt{flex:1;min-width:0;font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+@media (max-width:380px){
+  .wrap,.fin{padding-left:14px;padding-right:14px}
+  .qtext{font-size:20px;line-height:1.34}
+  .qguide{font-size:13px}
+  table.qt{table-layout:fixed}
+  table.qt th{padding:7px 4px;font-size:9px;white-space:normal;overflow-wrap:anywhere}
+  table.qt td{padding:7px 4px;font-size:11px;white-space:normal;overflow-wrap:anywhere}
+}
 </style>
 </head>
 <body>
@@ -255,12 +295,14 @@ table.qt tr:last-child td{border-bottom:none}
   <div id="body"></div>
   <div id="foot"></div>
 </div>
-<script src="bank.js"></script>
+<script src="bank.js?v=1.1"></script>
+<script src="knowledge.js?v=1.1"></script>
 <script>
 (function(){
 "use strict";
 var BANK=window.BANK;
 if(!BANK){document.getElementById('body').innerHTML='<p style="padding:40px;text-align:center">bank.js не загрузился</p>';return;}
+var KNOWLEDGE=window.KNOWLEDGE||{};
 
 /* ---------- state ---------- */
 var LS='cooprep.v1';
@@ -360,6 +402,11 @@ function tableHtml(t){
     h+='</tr>';
   }
   return h+'</tbody></table>';
+}
+function formulaHtml(s){
+  /* Keep formulas offline, readable and typographically closer to maths than
+     a phone-style text string. The source remains plain text for accessibility. */
+  return esc(s).replace(/\^\(([^)]+)\)/g,'<sup>($1)</sup>').replace(/\^(\d+|[A-Za-z]+)/g,'<sup>$1</sup>');
 }
 function ring(pct,color,size){
   var sw=Math.round(size/13),r=(size-sw)/2,c=2*Math.PI*r,
@@ -491,8 +538,8 @@ function viewHome(){
     });
     h+='</div></div>';
   });
-  h+='<div class="acc'+(accProto?' open':'')+'"><div class="ah" onclick="A.proto()">'
-   +'<span>Протокол ответа на незнакомую задачу</span><span class="chev">›</span></div><div class="ab">'
+  h+='<div class="acc'+(accProto?' open':'')+'"><button class="ah" aria-expanded="'+(accProto?'true':'false')+'" aria-controls="protocol-body" onclick="A.proto()">'
+   +'<span>Протокол ответа на незнакомую задачу</span><span class="chev">›</span></button><div class="ab" id="protocol-body">'
    +'<ol class="steps">'+BANK.protocol.steps.map(function(s){return '<li>'+esc(s)+'</li>';}).join('')+'</ol>'
    +(BANK.protocol.note?'<p class="sp" style="margin-top:10px">'+esc(BANK.protocol.note)+'</p>':'')+'</div></div>';
   h+='<div class="footrow"><button class="btn sec" onclick="A.theme()">'
@@ -504,8 +551,25 @@ function viewHome(){
 
 /* ---------- type ---------- */
 function headType(){var t=TBY[typeId];
-  return '<div class="hrow"><button class="xbtn" onclick="A.home()">‹</button>'
+  return '<div class="hrow"><button class="xbtn" aria-label="Назад к списку тем" title="Назад" onclick="A.home()">‹</button>'
    +'<div class="ht">'+esc(t.num+' · '+t.title)+'</div></div>';}
+function learnCard(t){
+  var k=KNOWLEDGE[t.id];
+  if(!k)return '';
+  var h='<section class="learn" aria-label="Объяснение темы">';
+  h+='<div class="learn-kicker">С нуля, на пальцах</div><h3>'+esc(t.title)+'</h3>';
+  h+='<p class="learn-plain">'+esc(k.plain)+'</p>';
+  if(k.cue)h+='<div class="learn-label">Как узнать этот тип</div><div class="learn-cue">'+esc(k.cue)+'</div>';
+  if(k.steps&&k.steps.length)h+='<div class="learn-label">Что делать по шагам</div><ol class="learn-list">'
+    +k.steps.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>';
+  if(k.example)h+='<div class="learn-label">Мини-пример с разбором</div><div class="learn-example"><div class="exq">'+esc(k.example.q)+'</div><ol>'
+    +k.example.a.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol></div>';
+  if(k.say)h+='<div class="learn-label">Фраза, которую можно сказать на интервью</div><div class="learn-voice">'+esc(k.say)+'</div>';
+  if(k.check&&k.check.length)h+='<div class="learn-label">Быстрая самопроверка</div><ul class="learn-check">'
+    +k.check.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
+  h+='</section>';
+  return h;
+}
 function viewType(){
   var t=TBY[typeId],s=tStat(t),m=t._m;
   var pct=s.total?Math.round(s.m/s.total*100):0;
@@ -514,17 +578,18 @@ function viewType(){
    +'<h2>'+esc(t.title)+'</h2>'
    +'<div class="sub">Решено '+s.ok+' из '+s.total+' · с первой попытки '+s.m+(s.bad?' · на повтор '+s.bad:'')+'</div>'
    +'<div class="track"><i style="width:'+pct+'%"></i></div></div>';
+  h+=learnCard(t);
   h+='<button class="btn" onclick="A.start(\''+t.id+'\')">Тренировать · '+t.qs.length+'</button>';
   h+='<div style="margin-top:10px">'+(s.bad>0
      ?'<button class="btn sec" onclick="A.startBad(\''+t.id+'\')">Только ошибки · '+s.bad+'</button>'
      :'<button class="btn sec" onclick="A.startShuffle(\''+t.id+'\')">Вперемешку</button>')+'</div>';
-  h+='<div class="acc'+(accTheory?' open':'')+'"><div class="ah" onclick="A.theory()">'
-   +'<span>Разбор темы</span><span class="chev">›</span></div><div class="ab">';
+  h+='<div class="acc'+(accTheory?' open':'')+'"><button class="ah" aria-expanded="'+(accTheory?'true':'false')+'" aria-controls="type-reference" onclick="A.theory()">'
+   +'<span>Шпаргалка и формулы</span><span class="chev">›</span></button><div class="ab" id="type-reference">';
   h+='<div class="sh">Что проверяют</div><p class="sp">'+esc(t.why)+'</p>';
   h+='<div class="sh">Как решать</div><ol class="steps">'
    +t.method.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>';
-  if(t.formulas&&t.formulas.length)h+='<div class="sh">Формулы</div>'
-   +t.formulas.map(function(x){return '<div class="fml">'+esc(x)+'</div>';}).join('');
+  if(t.formulas&&t.formulas.length)h+='<div class="sh">Формулы</div><p class="formula-note">Формула — короткая запись уже объяснённой мысли. Буквы заменяются числами из условия; × означает «умножить», / — «разделить», Σ — «сложить все части». Сначала пойми пример, потом запоминай формулу.</p>'
+   +t.formulas.map(function(x){return '<div class="fml" aria-label="Формула">'+formulaHtml(x)+'</div>';}).join('');
   if(t.example)h+='<div class="sh">Разобранный пример</div><div class="exbox"><div class="exq">'
    +esc(t.example.q)+'</div><ol>'+t.example.sol.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol></div>';
   if(t.traps&&t.traps.length)h+='<div class="sh">Частые ошибки</div><ul class="warns">'
@@ -544,7 +609,7 @@ function headPrac(){
   var c=cur();if(!c)return '';
   var prog=Math.round((S.idx+1)/S.list.length*100);
   return '<div class="prow" style="'+accentStyle(c.t._m)+'">'
-   +'<button class="xbtn" onclick="A.leave()">✕</button>'
+   +'<button class="xbtn" aria-label="Выйти из тренировки" title="Выйти" onclick="A.leave()">✕</button>'
    +'<div class="track"><i style="width:'+prog+'%"></i></div>'
    +'<span class="pcount">'+(S.idx+1)+'/'+S.list.length+'</span>'
    +'<span class="ptime" id="timer">'+fmtMs(S.deadline?Math.max(0,S.deadline-Date.now()):Date.now()-S.taskStart)+'</span>'
@@ -555,6 +620,8 @@ function viewPrac(){
   var q=c.q,m=c.t._m,h='';
   h+='<div class="wrap mid" style="'+accentStyle(m)+'"><div class="qwrap">';
   h+='<div class="qlabel">'+(q.kind==='open'?'Свободный ответ':q.kind==='mc'?'Выбери вариант':'Введи ответ')+'</div>';
+  var k=KNOWLEDGE[c.t.id];
+  if(k&&k.cue)h+='<div class="qguide"><b>Перед ответом:</b> '+esc(k.cue)+'</div>';
   h+='<div class="qtext">'+esc(q.t)+'</div>';
   if(q.table)h+='<div class="tw">'+tableHtml(q.table)+'</div>';
   if(q.kind==='num'){
@@ -581,7 +648,7 @@ function viewPrac(){
   }
   if(!S.answered&&!S.revealed){
     if(S.badInput)h+='<div class="tip" style="margin-top:14px">Не разобрал число. Набери цифрами: <b>120000</b>, <b>1,5</b> или коротко <b>120k</b>.</div>';
-    if(S.hint)h+='<div class="hintbox">'+esc(q.hint||(BANK.hints&&BANK.hints[q.id])||c.t.method[0])+'</div>';
+    if(S.hint)h+='<div class="hintbox">'+esc(q.hint||(BANK.hints&&BANK.hints[q.id])||(k&&k.hint)||c.t.method[0])+'</div>';
     h+='<div class="linkrow">';
     if(!S.hint)h+='<button class="btn link" onclick="A.hint()">Подсказка</button>';
     if(q.kind!=='open')h+='<button class="btn link" onclick="A.dontKnow()">Не знаю</button>';
@@ -597,8 +664,23 @@ function refCard(c){
   if(q.model&&q.model.length)h+='<ol>'+q.model.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>';
   if(q.checklist&&q.checklist.length)h+='<div class="hd" style="margin-top:14px"><span>Проверь у себя</span><span class="ln"></span></div><ul>'
    +q.checklist.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
-  if(q.trap)h+='<div class="tip">'+esc(q.trap)+'</div>';
+  if(!S.ok)h+=mistakeCard(c);
   return h+'</div>';
+}
+function mistakeCard(c){
+  var q=c.q,h='<div class="mistake"><div class="mt">Почему ответ не засчитан</div>';
+  if(S.skipped){
+    h+='<p><b>Ты пропустил задачу.</b> Это не ошибка характера: сейчас важнее увидеть решение, назвать приём вслух и вернуть задачу на повтор.</p>';
+  }else if(q.kind==='num'){
+    h+='<p>Ты ввёл <b>'+esc(S.user||'—')+'</b>, а правильный ориентир — <b>'+fmt(q.a)+(q.unit?' '+esc(q.unit):'')+'</b>.</p>';
+  }else if(q.kind==='mc'){
+    h+='<p>Ты выбрал <b>'+esc(S.user||'—')+'</b>. Правильный вариант — <b>'+String.fromCharCode(65+q.correct)+'. '+esc(q.opts[q.correct])+'</b>.</p>';
+  }else{
+    h+='<p>Самооценка показала, что ход ответа нужно повторить. Сверь структуру с эталоном и назови один шаг, который пропустил.</p>';
+  }
+  if(q.trap)h+='<p><b>Типичная ловушка:</b> '+esc(q.trap)+'</p>';
+  h+='</div>';
+  return h;
 }
 function solCard(c){
   var q=c.q,h='<div class="sol"><div class="hd"><span>Решение</span><span class="ln"></span></div>';
@@ -606,7 +688,7 @@ function solCard(c){
   if(q.kind==='open'&&q.model&&q.model.length)h+='<ol>'+q.model.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>';
   if(q.checklist&&q.checklist.length)h+='<div class="hd" style="margin-top:14px"><span>Проверь у себя</span><span class="ln"></span></div><ul>'
    +q.checklist.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
-  if(q.trap)h+='<div class="tip">'+esc(q.trap)+'</div>';
+  if(!S.ok)h+=mistakeCard(c);
   return h+'</div>';
 }
 function ansLine(c){
@@ -658,7 +740,7 @@ function footPrac(){
 }
 
 /* ---------- summary ---------- */
-function headSum(){return '<div class="hrow"><button class="xbtn" onclick="A.home()">‹</button>'
+function headSum(){return '<div class="hrow"><button class="xbtn" aria-label="Назад к главной" title="Назад" onclick="A.home()">‹</button>'
   +'<div class="ht">Итог</div></div>';}
 function viewSum(){
   if(!S)return '';
@@ -690,7 +772,7 @@ function viewSum(){
 /* ---------- actions ---------- */
 window.A={
   home:function(){screen='home';S=null;render();},
-  open:function(id){typeId=id;screen='type';accTheory=!ST.theory[id];S=null;render();},
+  open:function(id){typeId=id;screen='type';accTheory=false;S=null;render();},
   theory:function(){accTheory=!accTheory;if(accTheory&&typeId){ST.theory[typeId]=1;save();}render();},
   proto:function(){accProto=!accProto;render();},
   theme:function(){
