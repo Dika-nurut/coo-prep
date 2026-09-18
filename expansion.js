@@ -456,10 +456,15 @@
 
   /* Original authored questions are the first examples in each topic. Give
      them a conservative level so the route still starts gently. */
+  var AUTHORED_SKILLS={
+    m1_1:'m1_part',m1_2:'m1_reverse_drop',m1_3:'m1_find_base',m1_4:'m1_weighted',m1_5:'m1_multi_period',m1_6:'m1_part',m1_7:'m1_part',m1_8:'m1_sequential',m1_9:'m1_margin',m1_10:'m1_compensation',m1_11:'m1_reverse_drop',
+    p1_1:'p1_dice',p1_2:'p1_without_replacement',p1_3:'p1_sequence',p1_4:'p1_share',p1_5:'p1_combinations',p1_6:'p1_and',p1_7:'p1_combinations',p1_8:'p1_dice',p1_9:'p1_or',p1_10:'p1_combinations',p1_11:'p2_at_least_one'
+  };
   BANK.modules.forEach(function(m){m.types.forEach(function(t){
     var authored=t.qs.filter(function(q){return !q.level;});
     var count=authored.length;
     authored.forEach(function(q,i){q.level=1+Math.min(4,Math.floor(i/Math.max(1,Math.ceil(count/5))));q.skill=q.skill||t.id+'_core';});
+    authored.forEach(function(q){if(AUTHORED_SKILLS[q.id])q.skill=AUTHORED_SKILLS[q.id];});
     if(t.id==='p1'&&t.qs.some(function(q){return q.id==='p1_2';}))t.qs.filter(function(q){return q.id==='p1_2';})[0].skill='p1_without_replacement';
   });});
 

@@ -442,11 +442,11 @@ function tStat(t){var o=0,m=0,b=0;t.qs.forEach(function(q){
 function levelStat(t){var a=[1,2,3,4,5].map(function(level){var all=0,done=0; t.qs.forEach(function(q){if((q.level||1)===level){all++;if(isOk(q))done++;}});return{all:all,done:done};});return a;}
 function nextLevel(t){var a=levelStat(t);for(var i=0;i<a.length;i++)if(a[i].done<a[i].all)return i+1;return 0;}
 var SKILL_NAMES={
-  m1_part:'процент от числа',m1_growth:'рост на процент',m1_drop:'снижение на процент',m1_reverse_growth:'обратный рост',m1_reverse_drop:'обратное снижение',m1_sequential:'последовательные проценты',m1_find_base:'поиск исходной базы',m1_compensation:'компенсация снижения',m1_cagr:'среднегодовой рост',m1_multi_period:'рост по периодам',
-  p1_dice:'перечень исходов на костях',p1_share:'доля от общего числа',p1_combinations:'сочетания без порядка',p1_ratio:'благоприятные / все',p1_and:'независимое «и»',p1_or:'несовместимое «или»',p1_uniform:'равновероятные исходы',p1_intersection:'пересечение условий',p1_sequence:'последовательные броски',p1_pairs:'уникальные пары',
+  m1_part:'процент от числа',m1_growth:'рост на процент',m1_drop:'снижение на процент',m1_reverse_growth:'обратный рост',m1_reverse_drop:'обратное снижение',m1_sequential:'последовательные проценты',m1_find_base:'поиск исходной базы',m1_compensation:'компенсация снижения',m1_cagr:'среднегодовой рост',m1_multi_period:'рост по периодам',m1_weighted:'взвешенное среднее',m1_margin:'маржа и знаменатель',
+  p1_dice:'перечень исходов на костях',p1_share:'доля от общего числа',p1_combinations:'сочетания без порядка',p1_ratio:'благоприятные / все',p1_and:'независимое «и»',p1_or:'несовместимое «или»',p1_uniform:'равновероятные исходы',p1_intersection:'пересечение условий',p1_sequence:'последовательные броски',p1_pairs:'уникальные пары',p2_at_least_one:'«хотя бы один» через дополнение',
   p1_without_replacement:'выбор без возвращения'
 };
-function skillLabel(q){return SKILL_NAMES[q.skill]||'этот приём';}
+function skillLabel(q){return SKILL_NAMES[q.skill]||(q._t?'приём из темы «'+q._t.title+'»':'этот приём');}
 /* вес типа для тренировки: слабые темы получают больше слотов */
 function typeWeight(t){
   var s=tStat(t),seen=s.ok+s.bad;
