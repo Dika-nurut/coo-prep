@@ -21,6 +21,7 @@
       var q=make(i);
       q.id=id+"_x"+String(start+i+1).padStart(3,"0");
       q.level=taskLevel(id,i,need);
+      q.skill=q.skill||taskSkill(id,i);
       if(!q.hint)q.hint="Сначала назови, что дано, что нужно найти и в каких единицах будет ответ.";
       t.qs.push(q);
     }
@@ -41,10 +42,21 @@
     pm5:[1,1,2,2,3,3,4,4,5,5], pm6:[1,1,2,2,3,3,4,4,5,5],
     pm7:[1,1,2,2,3,3,4,4,5,5], pm8:[1,1,2,2,3,3,4,4,5,5]
   };
+  var SKILL_MAP={
+    m1:['m1_part','m1_growth','m1_drop','m1_reverse_growth','m1_reverse_drop','m1_sequential','m1_find_base','m1_compensation','m1_cagr','m1_multi_period'],
+    p1:['p1_dice','p1_share','p1_combinations','p1_ratio','p1_and','p1_or','p1_uniform','p1_without_replacement','p1_sequence','p1_pairs'],
+    p2:['p2_complement','p2_at_least_one','p2_reliability','p2_repeated','p2_failure','p2_union','p2_threshold','p2_inverse','p2_miss','p2_mixed'],
+    p3:['p3_conditional','p3_bayes','p3_test','p3_base_rate','p3_tree','p3_update','p3_false_positive','p3_reverse','p3_screening','p3_mixed'],
+    p4:['p4_ev','p4_cost','p4_risk','p4_choice','p4_sensitivity','p4_expected_loss','p4_option','p4_mixed','p4_tail','p4_decision']
+  };
   function taskLevel(id,i,need){
     var map=LEVEL_MAP[id];
     if(map)return map[i%map.length];
     return 1+Math.min(4,Math.floor(i/Math.max(1,Math.ceil(need/5))));
+  }
+  function taskSkill(id,i){
+    var map=SKILL_MAP[id];
+    return map?map[i%map.length]:id+'_pattern_'+(i%10);
   }
 
   add("m1",function(i){
@@ -99,7 +111,7 @@
     if(j===4){var p=pick([0.4,0.5,0.6,0.7],k%4),q=pick([0.3,0.4,0.5,0.8],j%4),ans=p*q*100;return n("", "Два независимых условия выполняются с вероятностями "+pct(p*100)+" и "+pct(q*100)+". Какова вероятность, что выполнятся оба?",ans,"%",["Для независимого «и» перемножаем: "+f(p,2)+" × "+f(q,2)+" = "+f(p*q,3)+".","Ответ "+pct(ans)+"."],"Для «и» независимых событий нужны множители, не сумма.",0.2);}
     if(j===5){var a=pick([3,4,5],k%3),b=pick([2,3,4],j%3),ans2=(a+b)/(a+b+pick([5,6,7],k%3))*100;return n("", "Из группы выбирают одного человека. "+a+" подходят по критерию A, "+b+" — по критерию B, пересечений нет; всего "+(a+b+pick([5,6,7],k%3))+". Вероятность A или B?",ans2,"%",["Несовместимые события складываются: "+a+" + "+b+".","Делим на общее число: "+pct(ans2)+"."],"Не умножай взаимоисключающее «или».",0.3);}
     if(j===6){var m=pick([4,5,6],k%3),ans3=1/m*100;return n("", "Справедливый генератор выдаёт одно из "+m+" равновероятных значений. Вероятность конкретного значения?",ans3,"%",["Все значения равновероятны: 1 / "+m+" = "+pct(ans3)+"."],"Не дели на 100: сначала найди число равных исходов.",0.2);}
-    if(j===7){var good2=pick([2,3,4],k%3),tot2=pick([10,12,15],j%3);return n("", "Из "+tot2+" заявок "+good2+" соответствуют обоим требованиям. Какова вероятность случайной заявки?",good2/tot2*100,"%",[good2+" / "+tot2+" = "+pct(good2/tot2*100)+"."],"«Оба» — пересечение, но знаменатель всё равно общий.",0.2);}
+    if(j===7){var red3=pick([2,3,4],k%3),blue3=pick([2,3,4],(k+1)%3),all3=red3+blue3,ans7=red3/all3*(red3-1)/(all3-1)*100;return n("", "В коробке "+red3+" красных и "+blue3+" синих жетона. Достают два без возврата. Вероятность, что оба красные?",ans7,"%",["Первый красный: "+red3+"/"+all3+".","После него остаётся "+(red3-1)+" красных из "+(all3-1)+" жетонов.","Перемножаем: "+red3+"/"+all3+" × "+(red3-1)+"/"+(all3-1)+" = "+pct(ans7)+"."],"После первого красного меняются и число красных, и общее число жетонов.",0.2);}
     if(j===8){var toss=pick([3,4,5],k%3),ans4=Math.pow(0.5,toss)*100;return n("", "Честную монету бросают "+toss+" раз. Вероятность получить орла каждый раз?",ans4,"%",["Каждый бросок даёт 1/2.","(1/2)^"+toss+" = "+pct(ans4)+"."],"Последовательные независимые исходы перемножаются.",0.2);}
     var nPeople=pick([5,6,7,8],k%4), pair=nPeople*(nPeople-1)/2;return n("", "На встрече "+nPeople+" человек. Сколько уникальных пар могут провести одну беседу?",pair,"пар",["Пара не имеет порядка.","C("+nPeople+",2) = "+pair+"."],"Не умножай на два из-за порядка разговора.",0.1);
   });
@@ -447,7 +459,8 @@
   BANK.modules.forEach(function(m){m.types.forEach(function(t){
     var authored=t.qs.filter(function(q){return !q.level;});
     var count=authored.length;
-    authored.forEach(function(q,i){q.level=1+Math.min(4,Math.floor(i/Math.max(1,Math.ceil(count/5))));});
+    authored.forEach(function(q,i){q.level=1+Math.min(4,Math.floor(i/Math.max(1,Math.ceil(count/5))));q.skill=q.skill||t.id+'_core';});
+    if(t.id==='p1'&&t.qs.some(function(q){return q.id==='p1_2';}))t.qs.filter(function(q){return q.id==='p1_2';})[0].skill='p1_without_replacement';
   });});
 
 })();

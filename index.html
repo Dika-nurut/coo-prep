@@ -187,6 +187,11 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .deep-explain ol{margin:0;padding-left:22px}
 .deep-explain li{margin:7px 0;line-height:1.52;color:var(--ink2)}
 .route-note{margin:12px 0;padding:11px 13px;border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:0 10px 10px 0;background:var(--surf2);color:var(--ink2);font-size:13.5px;line-height:1.5}
+.level-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin:12px 0 14px}
+.level-pill{min-width:0;padding:7px 5px;border:1px solid var(--line);border-radius:9px;background:var(--surf2);text-align:center;font-size:10px;line-height:1.25;color:var(--ink2)}
+.level-pill b{display:block;font-size:12px;color:var(--ink)}
+.level-pill i{display:block;font-style:normal;margin-top:3px;color:var(--ink3)}
+@media(max-width:430px){.level-strip{gap:3px}.level-pill{font-size:9px;padding:6px 2px}}
 
 /* ---------- type screen ---------- */
 .thero{background:var(--surf);border:2px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
@@ -298,8 +303,8 @@ table.qt tr:last-child td{border-bottom:none}
   <div id="body"></div>
   <div id="foot"></div>
 </div>
-<script src="bank.js?v=1.4"></script>
-<script src="expansion.js?v=1.3"></script>
+<script src="bank.js?v=1.5"></script>
+<script src="expansion.js?v=1.4"></script>
 <script src="knowledge.js?v=1.2"></script>
 <script>
 (function(){
@@ -434,6 +439,14 @@ function isMas(q){var s=ST.q[q.id];return !!(s&&s.s==='ok'&&s.first);}
 function isBad(q){var s=ST.q[q.id];return !!(s&&s.s==='bad');}
 function tStat(t){var o=0,m=0,b=0;t.qs.forEach(function(q){
   if(isOk(q)){o++;if(isMas(q))m++;}else if(isBad(q))b++;});return{ok:o,m:m,bad:b,total:t.qs.length};}
+function levelStat(t){var a=[1,2,3,4,5].map(function(level){var all=0,done=0; t.qs.forEach(function(q){if((q.level||1)===level){all++;if(isOk(q))done++;}});return{all:all,done:done};});return a;}
+function nextLevel(t){var a=levelStat(t);for(var i=0;i<a.length;i++)if(a[i].done<a[i].all)return i+1;return 0;}
+var SKILL_NAMES={
+  m1_part:'процент от числа',m1_growth:'рост на процент',m1_drop:'снижение на процент',m1_reverse_growth:'обратный рост',m1_reverse_drop:'обратное снижение',m1_sequential:'последовательные проценты',m1_find_base:'поиск исходной базы',m1_compensation:'компенсация снижения',m1_cagr:'среднегодовой рост',m1_multi_period:'рост по периодам',
+  p1_dice:'перечень исходов на костях',p1_share:'доля от общего числа',p1_combinations:'сочетания без порядка',p1_ratio:'благоприятные / все',p1_and:'независимое «и»',p1_or:'несовместимое «или»',p1_uniform:'равновероятные исходы',p1_intersection:'пересечение условий',p1_sequence:'последовательные броски',p1_pairs:'уникальные пары',
+  p1_without_replacement:'выбор без возвращения'
+};
+function skillLabel(q){return SKILL_NAMES[q.skill]||'этот приём';}
 /* вес типа для тренировки: слабые темы получают больше слотов */
 function typeWeight(t){
   var s=tStat(t),seen=s.ok+s.bad;
@@ -444,6 +457,13 @@ function typeWeight(t){
 function gStat(){var o=0,m=0,b=0;ALLQ.forEach(function(q){
   if(isOk(q)){o++;if(isMas(q))m++;}else if(isBad(q))b++;});return{ok:o,m:m,bad:b,total:TOTALQ};}
 function badList(){return ALLQ.filter(isBad);}
+function skillList(q){
+  if(!q||!q.skill)return [];
+  return ALLQ.filter(function(x){return x.skill===q.skill&&x.id!==q.id;}).sort(function(a,b){
+    var sa=ST.q[a.id],sb=ST.q[b.id];
+    return (sa&&sa.s==='bad'?0:1)-(sb&&sb.s==='bad'?0:1)||(a.level||1)-(b.level||1)||a._i-b._i;
+  }).slice(0,6);
+}
 function dayKey(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
 function todayN(){var k=dayKey(new Date());return (ST.today&&ST.today.d===k)?(ST.today.n||0):0;}
 function bumpToday(){var k=dayKey(new Date());
@@ -590,8 +610,11 @@ function viewType(){
    +'<div class="sub">Решено '+s.ok+' из '+s.total+' · с первой попытки '+s.m+(s.bad?' · на повтор '+s.bad:'')+'</div>'
    +'<div class="track"><i style="width:'+pct+'%"></i></div></div>';
   h+=learnCard(t);
+  var ls=levelStat(t);h+='<div class="level-strip" aria-label="Прогресс по уровням">'+ls.map(function(x,i){return '<div class="level-pill"><b>'+ (i+1) +'</b><span>'+x.done+'/'+x.all+'</span><i>пройдено</i></div>';}).join('')+'</div>';
   h+='<div class="route-note"><b>Маршрут обучения:</b> сначала простые задачи, затем обратные, многошаговые и с ловушками. Так ты тренируешь не память на один шаблон, а узнавание приёма в новой формулировке.</div>';
-  h+='<button class="btn" onclick="A.start(\''+t.id+'\')">Пройти маршрут · '+t.qs.length+'</button>';
+  var nl=nextLevel(t)||5,nls=ls[nl-1],complete=nls.done===nls.all;
+  h+='<button class="btn" onclick="A.startLevel(\''+t.id+'\','+nl+')">'+(complete?'Повторить':'Продолжить')+' уровень '+nl+' · '+(complete?nls.all:(nls.all-nls.done))+' задач</button>';
+  h+='<div style="margin-top:10px"><button class="btn sec" onclick="A.start(\''+t.id+'\')">Весь маршрут · '+t.qs.length+'</button></div>';
   h+='<div style="margin-top:10px">'+(s.bad>0
      ?'<button class="btn sec" onclick="A.startBad(\''+t.id+'\')">Только ошибки · '+s.bad+'</button>'
      :'<button class="btn sec" onclick="A.startShuffle(\''+t.id+'\')">Вперемешку</button>')+'</div>';
@@ -687,6 +710,11 @@ function mistakeCard(c){
     h+='<p>Ты выбрал <b>'+esc(S.user||'—')+'</b>. Правильный вариант — <b>'+String.fromCharCode(65+q.correct)+'. '+esc(q.opts[q.correct])+'</b>.</p>';
   }else{
     h+='<p>Самооценка показала, что ход ответа нужно повторить. Сверь структуру с эталоном и назови один шаг, который пропустил.</p>';
+  }
+  if(q.skill){
+    var sk=String(q.skill).replace(/[^a-zA-Z0-9_:-]/g,'');
+    h+='<p><b>Что сейчас тренируем:</b> '+esc(skillLabel(q))+'</p>';
+    if(skillList(q).length)h+='<button class="btn sec" style="margin-top:10px" onclick="A.skill(\''+sk+'\')">Закрепить этот приём · '+skillList(q).length+' задач</button>';
   }
   if(q.trap)h+='<p><b>Типичная ловушка:</b> '+esc(q.trap)+'</p>';
   h+='</div>';
@@ -795,9 +823,17 @@ window.A={
   },
   reset:function(){if(confirm('Сбросить весь прогресс?')){ST={q:{},theory:{},days:[],today:null,theme:THEME};save();render();}},
   start:function(id){var t=TBY[id];A.run(routeFor(t),'type');},
+  startLevel:function(id,level){var t=TBY[id];var list=t.qs.map(function(q,i){return{tid:id,qi:i};}).filter(function(x){return(t.qs[x.qi].level||1)===level;});A.run(list,'level');},
   startShuffle:function(id){var t=TBY[id];A.run(shuffle(t.qs.map(function(q,i){return{tid:id,qi:i};})),'type');},
   startBad:function(id){var t=TBY[id];
     A.run(t.qs.map(function(q,i){return{tid:id,qi:i};}).filter(function(x){return isBad(t.qs[x.qi]);}),'type');},
+  skill:function(skill){
+    var list=ALLQ.filter(function(q){return q.skill===skill;}).sort(function(a,b){
+      var sa=ST.q[a.id],sb=ST.q[b.id];
+      return (sa&&sa.s==='bad'?0:1)-(sb&&sb.s==='bad'?0:1)||(a.level||1)-(b.level||1)||a._i-b._i;
+    }).slice(0,6);
+    if(list.length)A.run(list.map(function(q){return{tid:q._t.id,qi:q._i};}),'skill');
+  },
   jump:function(id,i){var t=TBY[id];A.run(t.qs.map(function(q,j){return{tid:id,qi:j};}),'type',i);},
   run:function(list,mode,startAt){
     if(!list.length)return;
