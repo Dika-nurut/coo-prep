@@ -3,7 +3,7 @@ window.BANK = {
 meta:{
   title:"COO Prep",
   subtitle:"Spectral · Project Manager, Back Office · встреча с COO",
-  version:"2.0"
+  version:"2.1"
 },
 protocol:{
   steps:[
