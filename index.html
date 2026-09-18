@@ -182,6 +182,10 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .mistake .mt{font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px}
 .mistake p{font-size:13.5px;line-height:1.5;font-weight:600;margin-top:5px}
 .mistake b{font-weight:800}
+.deep-explain{margin-top:14px;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surf2)}
+.deep-explain .dt{font-weight:800;margin-bottom:7px;color:var(--ink)}
+.deep-explain ol{margin:0;padding-left:22px}
+.deep-explain li{margin:7px 0;line-height:1.52;color:var(--ink2)}
 
 /* ---------- type screen ---------- */
 .thero{background:var(--surf);border:2px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
@@ -293,7 +297,7 @@ table.qt tr:last-child td{border-bottom:none}
   <div id="body"></div>
   <div id="foot"></div>
 </div>
-<script src="bank.js?v=1.2"></script>
+<script src="bank.js?v=1.3"></script>
 <script src="expansion.js?v=1.2"></script>
 <script src="knowledge.js?v=1.2"></script>
 <script>
@@ -682,6 +686,7 @@ function mistakeCard(c){
 function solCard(c){
   var q=c.q,h='<div class="sol"><div class="hd"><span>Решение</span><span class="ln"></span></div>';
   if(q.sol&&q.sol.length)h+='<ol>'+q.sol.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>';
+  if(q.explain&&q.explain.length)h+='<div class="deep-explain"><div class="dt">Разберём на пальцах</div><ol>'+q.explain.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol></div>';
   if(q.kind==='open'&&q.model&&q.model.length)h+='<ol>'+q.model.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>';
   if(q.checklist&&q.checklist.length)h+='<div class="hd" style="margin-top:14px"><span>Проверь у себя</span><span class="ln"></span></div><ul>'
    +q.checklist.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
