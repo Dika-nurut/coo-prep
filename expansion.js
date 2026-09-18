@@ -20,12 +20,32 @@
     for(var i=0;i<need;i++){
       var q=make(i);
       q.id=id+"_x"+String(start+i+1).padStart(3,"0");
+      q.level=taskLevel(id,i,need);
       if(!q.hint)q.hint="Сначала назови, что дано, что нужно найти и в каких единицах будет ответ.";
       t.qs.push(q);
     }
   }
   function pick(a,i){return a[i%a.length];}
   function pct(x){return f(x,1)+"%";}
+
+  /* The route moves from direct application to reverse, multi-step and
+     transfer questions. Repetition remains inside each level for fluency. */
+  var LEVEL_MAP={
+    m1:[1,1,1,2,2,3,3,4,5,3], m2:[1,2,3,3,4,1,3,4,4,2],
+    m3:[1,3,1,1,2,1,3,4,1,2], p1:[1,1,2,1,3,2,1,2,2,3],
+    p2:[1,1,2,2,3,3,2,4,4,3], p3:[1,2,2,3,3,4,4,5,5,4],
+    p4:[1,2,2,3,3,4,4,5,5,4], b1:[1,1,2,2,3,3,4,4,5,5],
+    b2:[1,1,2,2,3,3,4,4,5,5], b3:[1,2,2,3,3,4,4,5,5,4],
+    pm1:[1,1,2,2,3,3,4,4,5,5], pm2:[1,1,2,2,3,3,4,4,5,5],
+    pm3:[1,1,2,2,3,3,4,4,5,5], pm4:[1,1,2,2,3,3,4,4,5,5],
+    pm5:[1,1,2,2,3,3,4,4,5,5], pm6:[1,1,2,2,3,3,4,4,5,5],
+    pm7:[1,1,2,2,3,3,4,4,5,5], pm8:[1,1,2,2,3,3,4,4,5,5]
+  };
+  function taskLevel(id,i,need){
+    var map=LEVEL_MAP[id];
+    if(map)return map[i%map.length];
+    return 1+Math.min(4,Math.floor(i/Math.max(1,Math.ceil(need/5))));
+  }
 
   add("m1",function(i){
     var k=Math.floor(i/10), j=i%10, base=200+25*k, p=pick([10,12,15,18,20,25,30,35,40,8],j), old=pick([80,120,160,240,320,400,500,640,800,1000],j)+10*k;
@@ -421,5 +441,13 @@
     if(j===8)return n("", "Проект A даёт "+a+"k прибыли при затратах "+b+"k. Маржа от выручки, если выручка "+(a+b)+"k?",a/(a+b)*100,"%",["Прибыль / выручка = "+a+" / "+(a+b)+" = "+pct(a/(a+b)*100)+"."],"ROI и маржа используют разные знаменатели.",0.3);
     return mc("", "В дашборде срок зелёный, но данные обновлены месяц назад. Что важнее?",["Считать проект зелёным","Проверить свежесть данных и скрытый риск","Добавить ещё зелёный индикатор","Удалить проект"],1,["Сначала проверить качество сигнала."],"Старый статус не подтверждает текущую реальность.");
   });
+
+  /* Original authored questions are the first examples in each topic. Give
+     them a conservative level so the route still starts gently. */
+  BANK.modules.forEach(function(m){m.types.forEach(function(t){
+    var authored=t.qs.filter(function(q){return !q.level;});
+    var count=authored.length;
+    authored.forEach(function(q,i){q.level=1+Math.min(4,Math.floor(i/Math.max(1,Math.ceil(count/5))));});
+  });});
 
 })();
