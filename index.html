@@ -172,6 +172,8 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .learn-check{list-style:none;padding:0}
 .learn-check li{font-size:14px;line-height:1.5;color:var(--ink2);padding:4px 0 4px 25px;position:relative}
 .learn-check li:before{content:'□';position:absolute;left:0;top:1px;font-size:19px;line-height:1;color:var(--acc);font-weight:800}
+.strategy-card{margin-top:18px;background:var(--surf2);border:2px solid var(--line);border-left:6px solid var(--acc);border-radius:12px;padding:14px 15px}
+.strategy-note{font-size:12.5px;line-height:1.5;color:var(--ink2);margin-top:12px;font-weight:600}
 .formula-note{font-size:13.5px;line-height:1.5;color:var(--ink2);margin-bottom:8px}
 .fml{font:600 16px/1.45 "Cambria Math","STIX Two Math","DejaVu Serif",Georgia,serif;text-align:center;letter-spacing:0;background:var(--surf2);
   border:2px solid var(--line);border-radius:10px;padding:11px 12px;margin-bottom:7px;color:var(--blue);overflow-x:auto;white-space:nowrap}
@@ -303,8 +305,8 @@ table.qt tr:last-child td{border-bottom:none}
   <div id="body"></div>
   <div id="foot"></div>
 </div>
-<script src="bank.js?v=2.1"></script>
-<script src="expansion.js?v=1.5"></script>
+<script src="bank.js?v=2.2"></script>
+<script src="expansion.js?v=1.6"></script>
 <script src="knowledge.js?v=1.6"></script>
 <script>
 (function(){
@@ -444,7 +446,8 @@ function nextLevel(t){var a=levelStat(t);for(var i=0;i<a.length;i++)if(a[i].done
 var SKILL_NAMES={
   m1_part:'процент от числа',m1_growth:'рост на процент',m1_drop:'снижение на процент',m1_reverse_growth:'обратный рост',m1_reverse_drop:'обратное снижение',m1_sequential:'последовательные проценты',m1_find_base:'поиск исходной базы',m1_compensation:'компенсация снижения',m1_cagr:'среднегодовой рост',m1_multi_period:'рост по периодам',m1_weighted:'взвешенное среднее',m1_margin:'маржа и знаменатель',
   p1_dice:'перечень исходов на костях',p1_share:'доля от общего числа',p1_combinations:'сочетания без порядка',p1_ratio:'благоприятные / все',p1_and:'независимое «и»',p1_or:'несовместимое «или»',p1_uniform:'равновероятные исходы',p1_intersection:'пересечение условий',p1_sequence:'последовательные броски',p1_pairs:'уникальные пары',p2_at_least_one:'«хотя бы один» через дополнение',
-  p1_without_replacement:'выбор без возвращения'
+  p1_without_replacement:'выбор без возвращения',
+  pm9_pv:'приведённая стоимость одного потока',pm9_pv_multi:'приведённая стоимость через два года',pm9_npv:'NPV с эффектом через год',pm9_npv_multi:'NPV по годам',pm9_rate:'сборка ставки дисконтирования',pm9_breakeven:'ставка при нулевом NPV',pm9_timing:'время и приведённая ценность',pm9_rate_direction:'ставка и направление NPV',pm9_annuity:'одинаковые потоки по годам',pm9_judgment:'NPV и проектное решение'
 };
 function skillLabel(q){return SKILL_NAMES[q.skill]||(q._t?'приём из темы «'+q._t.title+'»':'этот приём');}
 var SKILL_GUIDES={
@@ -457,7 +460,11 @@ var SKILL_GUIDES={
   p1_dice:{title:'Перечень исходов на костях',plain:'У двух костей результат — это пара чисел, а не только итоговая сумма. Пара 2 и 6 отличается от пары 6 и 2, потому что первая кость и вторая кость различимы.',steps:['Всего пар: 6 × 6 = 36.','Выпиши все пары, которые дают нужную сумму.','Раздели число подходящих пар на 36.'],example:'Сумма 8: пять пар, поэтому 5/36 ≈ 13,9%.'},
   p1_combinations:{title:'Сочетания без порядка',plain:'Если выбираем команду или пару, порядок не важен: Анна–Борис и Борис–Анна — одна и та же пара. Поэтому сначала считаем пары руками и не используем формулы.',steps:['Назови людей буквами и выпиши пары.','С первым человеком будет 4 новые пары, со вторым — 3, затем 2 и 1.','Сложи: 4 + 3 + 2 + 1 = 10.','Только после этого разберём, откуда берётся факториальная запись.'],example:'Из 5 человек: АБ, АВ, АГ, АД; БВ, БГ, БД; ВГ, ВД; ГД. Всего 10 пар.',next:['Факториал — это просто произведение чисел: 5! = 5 × 4 × 3 × 2 × 1.','В записи C(5,2) верхнее 5 означает «всего 5 человек», а нижнее 2 — «выбираем двоих».','Оставшихся людей 5 − 2 = 3, поэтому появляется 3! внизу.','Получаем C(5,2) = 5!/(2! × 3!) = 120/(2 × 6) = 10.','Почему делим на 2!? Выбранную пару можно назвать двумя способами: АБ и БА. Почему делим на 3!? Троих невыбранных можно переставлять, но выбранная пара от этого не меняется.']},
   p1_and:{title:'Независимое «и»',plain:'Слово «и» означает, что должны произойти оба события. Если они независимы, шанс совместного результата получается умножением двух шансов.',steps:['Переведи проценты в доли.','Умножь вероятность первого события на вероятность второго.','Верни ответ в проценты.'],example:'30% и 40% одновременно: 0,3 × 0,4 = 0,12 = 12%.'},
-  p1_or:{title:'Несовместимое «или»',plain:'Если возможен только один из вариантов, складываем шансы этих вариантов. Сначала проверь, что события действительно не могут случиться одновременно.',steps:['Пойми, что спрашивают: первый вариант или второй.','Проверь, есть ли пересечение.','Если пересечения нет, сложи вероятности и раздели на общее число исходов.'],example:'3 подходящих вариантов и 2 других: шанс первого или второго подходящего = 5 подходящих из общего числа.'}
+  p1_or:{title:'Несовместимое «или»',plain:'Если возможен только один из вариантов, складываем шансы этих вариантов. Сначала проверь, что события действительно не могут случиться одновременно.',steps:['Пойми, что спрашивают: первый вариант или второй.','Проверь, есть ли пересечение.','Если пересечения нет, сложи вероятности и раздели на общее число исходов.'],example:'3 подходящих вариантов и 2 других: шанс первого или второго подходящего = 5 подходящих из общего числа.'},
+  pm9_pv:{title:'Приведённая стоимость потока',plain:'Деньги, которые придут позже, стоят меньше сегодняшних: их можно было бы вложить под ставку капитала. Поэтому будущий поток не уменьшают на проценты, а делят на множитель (1 + ставка).',steps:['Назови ставку дисконтирования и откуда она взялась.','Построй множитель: 1 + ставка в долях.','Раздели будущий поток на множитель в степени номера года.','Скажи единицу ответа и сравни с номиналом.'],example:'1 млн через год при 10%: 1 000 / 1,10 = 909,1k — это и есть сегодняшняя ценность потока.'},
+  pm9_npv:{title:'NPV с эффектом через год',plain:'NPV отвечает на вопрос «сколько ценности проект создаёт сегодня». Инвестиция тратится сегодня и не дисконтируется, а эффект через год сначала приводится к сегодняшней стоимости.',steps:['Выпиши инвестицию, эффект по годам и ставку.','Приведи эффект: сумма / (1 + ставка)^год.','Вычти инвестицию из суммы приведённых эффектов.','Положительный NPV назови вместе со ставкой, при которой он посчитан.'],example:'Инвестиция 900k, эффект 1 100k через год, ставка 10%: 1 100 / 1,10 = 1 000; NPV = 1 000 − 900 = +100k.'},
+  pm9_rate:{title:'Сборка ставки дисконтирования',plain:'Ставка не берётся из воздуха: финансы дают базовую стоимость капитала, а риск конкретного проекта добавляется премией. Рискованный проект должен дисконтироваться по более высокой ставке.',steps:['Найди в условии базовую ставку капитала.','Найди премию за риск именно этого проекта.','Сложи их и назови итоговую ставку.','Проверь: зависимость от поставщика и срок — аргументы за более высокую премию.'],example:'Базовая ставка 6%, премия за риск 4%: проект дисконтируется по 10%.'},
+  pm9_breakeven:{title:'Ставка при нулевом NPV',plain:'NPV становится нулевым, когда приведённый эффект в точности покрывает инвестицию. Из этого равенства можно найти ставку — это граница, выше которой проект уже не создаёт ценность.',steps:['Запиши равенство: приведённый поток = инвестиция.','Подставь потоки: эффект / (1 + r) = инвестиция.','Вырази r и назови ответ в процентах.','Скажи, что ставка выше этой границы делает проект убыточным по ценности.'],example:'Инвестиция 1 000k, возврат 1 120k через год: 1 120 / (1 + r) = 1 000 → r = 12%.'}
 };
 function skillGuide(skill){return SKILL_GUIDES[skill]||{title:'Закрепление приёма',plain:'Сейчас мы спокойно повторим один способ решения. Сначала разберём, что означают числа, затем решим несколько похожих задач и постепенно уберём подсказки.',steps:['Назови, что дано.','Скажи, что нужно найти.','Выбери одну формулу или последовательность действий.','Проверь ответ здравым смыслом.'],example:'Сначала реши самый простой вариант этого типа, а потом перенеси тот же приём на новую формулировку.'};}
 /* вес типа для тренировки: слабые темы получают больше слотов */
@@ -532,6 +539,7 @@ function render(){
   var th='',bh='',fh='';
   if(screen==='home'){bh=viewHome();}
   else if(screen==='type'){th=headType();bh=viewType();}
+  else if(screen==='strategyIntro'){th=headStrategy();bh=viewStrategyIntro();}
   else if(screen==='skillIntro'){th=headSkill();bh=viewSkillIntro();}
   else if(screen==='practice'){th=headPrac();bh=viewPrac();fh=footPrac();}
   else if(screen==='summary'){th=headSum();bh=viewSum();}
@@ -563,6 +571,10 @@ function viewHome(){
      :(tn?('Сегодня '+tn+' из '+DAILY+' · осталось '+(DAILY-tn)):'Микс из всех типов, слабые места первыми'))+'</div></div>';
   h+='<div style="margin-top:12px"><button class="btn" onclick="A.drill()">'
    +(tn>=DAILY?'Ещё тренировка':'Начать тренировку')+'</button></div>';
+  h+='<div class="card lip" style="margin-top:12px"><div class="hero-top">'
+   +'<span class="lbl">Стратегические кейсы</span><span class="hero-n">'+strategyList().length+' · с разбором</span></div>'
+   +'<div class="hero-txt">Ситуация, что проверяют, каркас и пример сильного ответа — до практики</div>'
+   +'<button class="btn" style="margin-top:10px" onclick="A.strategyIntro()">Разобрать и практиковать</button></div>';
   var dueN=dueList().length;
   if(dueN)h+='<div style="margin-top:10px"><button class="btn sec" onclick="A.review()">'
    +'Повторить по расписанию · '+dueN+'</button></div>';
@@ -595,6 +607,32 @@ function viewHome(){
 }
 
 /* ---------- type ---------- */
+function headStrategy(){
+  return '<div class="hrow"><button class="xbtn" aria-label="Назад к главной" title="Назад" onclick="A.home()">‹</button>'
+   +'<div class="ht">Стратегические кейсы</div></div>';
+}
+function strategyList(){
+  return ALLQ.filter(function(q){
+    return BANK.strategy.order.indexOf(q._t.id)>=0;
+  }).sort(function(a,b){
+    return BANK.strategy.order.indexOf(a._t.id)-BANK.strategy.order.indexOf(b._t.id)||a._i-b._i;
+  });
+}
+function viewStrategyIntro(){
+  var h='<div class="wrap"><section class="learn" aria-label="Стратегические кейсы">';
+  h+='<div class="learn-kicker">Сначала поймем, потом ответим</div><h3>Как тренировать стратегические кейсы</h3>';
+  h+='<p class="learn-plain">Каждая задача сначала разбирается как сцена: что происходит, что реально спрашивает COO, по какой логике думать и как звучит сильный ответ. После этого ты пишешь свой ответ и сравниваешь его с эталоном.</p>';
+  BANK.strategy.order.forEach(function(id){
+    var b=BANK.strategy.types[id], n=ALLQ.filter(function(q){return q._t.id===id;}).length;
+    h+='<div class="learn-label">'+esc(b.title)+' · '+n+' задач</div>';
+    h+='<div class="learn-cue">'+esc(b.situation)+'</div>';
+  });
+  h+='<div class="strategy-note"><b>Честная оговорка:</b> '+esc(BANK.strategy.note)+'</div>';
+  h+='<button class="btn" style="margin-top:16px" onclick="A.strategy()">Начать разбор и практику · '+strategyList().length+' задач</button>';
+  h+='<div style="margin-top:10px"><button class="btn sec" onclick="A.home()">Вернуться к тренировке</button></div>';
+  h+='</section></div>';
+  return h;
+}
 function headType(){var t=TBY[typeId];
   return '<div class="hrow"><button class="xbtn" aria-label="Назад к списку тем" title="Назад" onclick="A.home()">‹</button>'
    +'<div class="ht">'+esc(t.num+' · '+t.title)+'</div></div>';}
@@ -686,6 +724,7 @@ function viewPrac(){
   h+='<div class="wrap mid" style="'+accentStyle(m)+'"><div class="qwrap">';
   h+='<div class="qlabel">'+(q.kind==='open'?'Свободный ответ':q.kind==='mc'?'Выбери вариант':'Введи ответ')+' · '+esc(LEVEL_NAMES[q.level||1])+'</div>';
   h+='<div class="qtext">'+esc(q.t)+'</div>';
+  if(BANK.strategy.order.indexOf(q._t.id)>=0)h+=caseCard(c);
   if(q.table)h+='<div class="tw">'+tableHtml(q.table)+'</div>';
   if(q.kind==='num'){
     h+='<div class="ansbox">'+(S.val?'<span class="v">'+esc(S.val)+'</span>':'<span class="ph">0</span>')
@@ -729,6 +768,18 @@ function refCard(c){
    +q.checklist.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
   if(!S.ok)h+=mistakeCard(c);
   return h+'</div>';
+}
+function caseCard(c){
+  var q=c.q,b=BANK.strategy.types[q._t.id],d=BANK.strategy.decode[q.id];
+  var h='<section class="strategy-card" aria-label="Разбор кейса">';
+  if(d)h+='<div class="learn-label">Конкретно в этой задаче</div><div class="learn-plain">'+esc(d)+'</div>';
+  h+='<div class="learn-label">Сцена</div><p class="sp">'+esc(b.situation)+'</p>';
+  h+='<div class="learn-label">Что спрашивает COO</div><p class="sp">'+esc(b.ask)+'</p>';
+  h+='<div class="learn-label">Что проверяют</div><ul>'+b.checks.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
+  h+='<div class="learn-label">Каркас ответа</div><ol>'+b.frame.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>';
+  h+='<div class="learn-label">Пример сильного ответа</div><ol>'+b.sample.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>';
+  h+='<div class="strategy-note">'+esc(BANK.strategy.note)+'</div></section>';
+  return h;
 }
 function mistakeCard(c){
   var q=c.q,h='<div class="mistake"><div class="mt">Почему ответ не засчитан</div>';
@@ -843,6 +894,8 @@ function viewSum(){
 window.A={
   home:function(){screen='home';S=null;render();},
   open:function(id){typeId=id;screen='type';accTheory=false;S=null;render();},
+  strategyIntro:function(){S=null;typeId=null;screen='strategyIntro';render();},
+  strategy:function(){A.run(strategyList().map(function(q){return{tid:q._t.id,qi:q._i};}),'strategy');},
   theory:function(){accTheory=!accTheory;if(accTheory&&typeId){ST.theory[typeId]=1;save();}render();},
   proto:function(){accProto=!accProto;render();},
   theme:function(){
@@ -917,7 +970,7 @@ window.A={
     shuffle(pick);
     A.run(pick.map(function(q){return{tid:q._t.id,qi:q._i};}),'drill');
   },
-  leave:function(){S=null;screen=typeId?'type':'home';render();},
+  leave:function(){var fromStrategy=!!(S&&S.mode==='strategy');S=null;if(fromStrategy)typeId=null;screen=(!fromStrategy&&typeId)?'type':'home';render();},
   hint:function(){if(!S)return;var el=document.getElementById('ans');
     if(el&&el.value!==undefined)S.val=el.value;S.hint=true;render();},
   key:function(k){
