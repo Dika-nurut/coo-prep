@@ -191,6 +191,18 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .deep-explain .dt{font-weight:800;margin-bottom:7px;color:var(--ink)}
 .deep-explain ol{margin:0;padding-left:22px}
 .deep-explain li{margin:7px 0;line-height:1.52;color:var(--ink2)}
+.lesson-blk{border-left:4px solid var(--acc);padding:6px 0 6px 12px;margin-bottom:10px}
+.lesson-blk .lb-t{font-weight:800;font-size:13.5px;color:var(--ink);margin-bottom:4px}
+.lesson-blk ol{margin:0;padding-left:18px;font-size:14px;line-height:1.5;color:var(--ink2)}
+.lesson-blk li{margin-bottom:4px}
+.pairs{display:grid;gap:8px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pair.one{grid-template-columns:1fr}
+.wcell{border:2px solid var(--line);border-radius:12px;padding:9px 11px;background:var(--surf2);min-width:0}
+.wcell .ar{font-size:26px;line-height:1.35;color:var(--ink);text-align:right;unicode-bidi:isolate}
+.wcell .wtr{font-size:13.5px;font-weight:700;color:var(--ink2);margin-top:2px}
+.wcell .wtag{font-size:12px;color:var(--ink3);margin-top:2px}
+.wcell .say{min-height:32px;padding:4px 0;font-size:13px;text-align:left;width:auto}
 .hacks{display:grid;gap:8px}
 .hack{border:2px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surf2)}
 .hack .hn{font-weight:800;font-size:14.5px;color:var(--ink);margin-bottom:3px}
@@ -332,6 +344,7 @@ table.qt tr:last-child td{border-bottom:none}
 <script src="knowledge.js?v=1.10"></script>
 <script src="sprint.js?v=1.0"></script>
 <script src="hft.js?v=1.0"></script>
+<script src="teach.js?v=1.0"></script>
 <script>
 (function(){
 "use strict";
@@ -374,6 +387,7 @@ var ACC={
   f:{l:'#FF9600',d:'#FFAB33',ll:'#E08600',dl:'#D98F22'},
   pm:{l:'#0E7490',d:'#22A2BF',ll:'#0B5A70',dl:'#1C8AA6'},
   s:{l:'#0F9D6E',d:'#34D399',ll:'#0B7A55',dl:'#22B07F'},
+  t:{l:'#DB2777',d:'#F472B6',ll:'#9D174D',dl:'#DB2777'},
   h:{l:'#4F46E5',d:'#818CF8',ll:'#3730A3',dl:'#6366F1'}
 };
 function hex2rgb(h){h=h.replace('#','');if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
@@ -781,8 +795,9 @@ function viewHome(){
     });
     h+='</div>';
     if(m.intro)h+='<p class="mod-intro">'+esc(m.intro)+'</p>';
-    if(m.blitz||m.exam){
+    if(m.blitz||m.exam||m.rehearse){
       h+='<div class="btnrow mod-act">';
+      if(m.rehearse)h+='<button class="btn sec" onclick="A.rehearse(\''+m.id+'\')">Репетиция '+Math.round(m.rehearse.sec/60)+':00</button>';
       if(m.blitz)h+='<button class="btn sec" onclick="A.blitz(\''+m.id+'\')">Блиц '+Math.round(m.blitz.sec/60)+' мин'+(ST.best[m.id]?' · рекорд '+ST.best[m.id].ok:'')+'</button>';
       if(m.exam){var ex=ST.exam[m.id];h+='<button class="btn sec" onclick="A.exam(\''+m.id+'\')">Контрольная'+(ex?' · '+ex.pct+'%'+(ex.pct>=m.exam.pass?' ✓':''):'')+'</button>';}
       h+='</div>';
@@ -830,6 +845,12 @@ function viewStrategyIntro(){
 function headType(){var t=TBY[typeId];
   return '<div class="hrow"><button class="xbtn" aria-label="Назад к списку тем" title="Назад" onclick="A.home()">‹</button>'
    +'<div class="ht">'+esc(t.num+' · '+t.title)+'</div></div>';}
+function wordCell(w,tag){
+  return '<div class="wcell"><div class="ar" lang="ar" dir="rtl">'+esc(w.ar)+'</div><div class="wtr">'+esc(w.tr)+' · '+esc(w.ru)+'</div>'
+   +(tag?'<div class="wtag">'+esc(tag)+'</div>':'')
+   +(CAN_SAY?'<button class="btn link say" onclick="A.say(\''+esc(w.ar).replace(/'/g,'')+'\')">▶ Послушать</button>':'')+'</div>';
+}
+var CAN_SAY=!!(window.speechSynthesis&&window.SpeechSynthesisUtterance);
 function learnCard(t){
   var k=KNOWLEDGE[t.id];
   if(!k)return '';
@@ -846,6 +867,9 @@ function learnCard(t){
     +k.check.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
   if(k.hacks&&k.hacks.length)h+='<div class="learn-label">Хаки · '+k.hacks.length+'</div><div class="hacks">'
     +k.hacks.map(function(x){return '<div class="hack"><div class="hn">'+esc(x.name)+'</div><div class="hh">'+esc(x.how)+'</div>'+(x.ex?'<div class="hx">'+esc(x.ex)+'</div>':'')+'</div>';}).join('')+'</div>';
+  if(k.lessonScript&&k.lessonScript.length)h+='<div class="learn-label">Сценарий по минутам</div>'+k.lessonScript.map(function(b){return '<div class="lesson-blk"><div class="lb-t">'+esc(b.t)+'</div><ol>'+b.lines.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol></div>';}).join('');
+  if(k.pairs&&k.pairs.length)h+='<div class="learn-label">Пары: одна буква меняет смысл</div><div class="pairs">'+k.pairs.map(function(p){return '<div class="pair">'+wordCell(p.a,'с ع — горло сжато')+wordCell(p.b,'обычное «а»')+'</div>';}).join('')+'</div>';
+  if(k.words&&k.words.length)h+='<div class="learn-label">Слова для Дубая</div><div class="pairs">'+k.words.map(function(w){return '<div class="pair one">'+wordCell(w,w.note)+'</div>';}).join('')+'</div>';
   if(k.deep&&k.deep.length)h+='<div class="learn-label">Глубже и как тренировать</div><ul class="learn-deep">'
     +k.deep.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
   h+='</section>';
@@ -1099,8 +1123,16 @@ function viewSum(){
 }
 
 function sessionVerdict(){
-  if(!S||(S.mode!=='blitz'&&S.mode!=='exam')||!S.mid)return '';
+  if(!S||(S.mode!=='blitz'&&S.mode!=='exam'&&S.mode!=='rehearse')||!S.mid)return '';
   var m=modBy(S.mid),h='<div class="verdict">';
+  if(S.mode==='rehearse'){
+    var used=Math.round(((S.endedAt||Date.now())-S.startedAt)/1000),lim=m.rehearse.sec,tq=TBY[m.rehearse.type],full=null;
+    tq.qs.forEach(function(q){if(q.id==='t1_o_full')full=q;});
+    h+='<div class="vt">Репетиция · '+fmtMs(used*1000)+' из '+fmtMs(lim*1000)+'</div>';
+    h+='<p>'+(used<=lim?'Уложился. ':'Не уложился — сократи историю до 45 секунд. ')+'Теперь проведи урок целиком вслух и на видео, затем отметь по чек-листу:</p>';
+    if(full)h+='<ul class="learn-check">'+full.checklist.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
+    return h+'</div>';
+  }
   if(S.mode==='blitz'){
     var avg=S.done?((S.endedAt-S.startedAt)/1000/S.done):0;
     h+='<div class="vt">Блиц · '+esc(m.title)+'</div>';
@@ -1155,6 +1187,18 @@ window.A={
        skipped:false,badInput:false,done:0,correct:0,wrong:[],res:[],startedAt:Date.now(),taskStart:Date.now(),endedAt:null,
        deadline:(mode==='drill'&&withClock)?Date.now()+20*60*1000:null};
     screen='practice';render();
+  },
+  /* репетиция урока: ключевые части сценария подряд, общий таймер */
+  rehearse:function(mid){
+    var m=modBy(mid);if(!m||!m.rehearse)return;var t=TBY[m.rehearse.type];if(!t)return;
+    var list=[];m.rehearse.ids.forEach(function(id){t.qs.forEach(function(q,i){if(q.id===id)list.push({tid:t.id,qi:i});});});
+    A.run(list,'rehearse');if(!S)return;S.mid=mid;S.deadline=Date.now()+m.rehearse.sec*1000;render();
+  },
+  say:function(text){
+    if(!CAN_SAY)return;
+    try{var u=new SpeechSynthesisUtterance(text);u.lang='ar-SA';u.rate=0.7;
+      var v=speechSynthesis.getVoices().filter(function(x){return /^ar/i.test(x.lang);})[0];if(v)u.voice=v;
+      speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}
   },
   blitz:function(mid){
     var m=modBy(mid);if(!m||!m.blitz)return;
