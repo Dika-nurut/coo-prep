@@ -188,6 +188,25 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .deep-explain .dt{font-weight:800;margin-bottom:7px;color:var(--ink)}
 .deep-explain ol{margin:0;padding-left:22px}
 .deep-explain li{margin:7px 0;line-height:1.52;color:var(--ink2)}
+.hacks{display:grid;gap:8px}
+.hack{border:2px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surf2)}
+.hack .hn{font-weight:800;font-size:14.5px;color:var(--ink);margin-bottom:3px}
+.hack .hh{font-size:14px;line-height:1.5;color:var(--ink2)}
+.hack .hx{margin-top:5px;font-size:13.5px;line-height:1.45;color:var(--acc);font-weight:700;font-variant-numeric:tabular-nums}
+.learn-deep{padding-left:20px;font-size:14px;line-height:1.55;color:var(--ink2)}
+.learn-deep li{margin-bottom:6px}
+.mod-intro{font-size:13px;line-height:1.5;color:var(--ink2);margin:10px 0 0}
+.mod-act{margin-top:10px}
+.mod-act .btn{min-height:44px;padding:10px 8px;font-size:13px}
+.verdict{margin-top:16px;padding:14px;border:2px solid var(--line);border-radius:14px;background:var(--surf2)}
+.verdict .vt{font-weight:800;font-size:16px;margin-bottom:8px;color:var(--ink)}
+.verdict p{font-size:14px;line-height:1.5;color:var(--ink2);margin-top:8px}
+.vrows{display:grid;gap:6px}
+.vrow{display:flex;align-items:center;gap:8px;width:100%;text-align:left;border:2px solid var(--okline);background:var(--okbg);border-radius:10px;padding:8px 10px;font:inherit;color:var(--ink);cursor:pointer}
+.vrow.weak{border-color:var(--no);background:transparent}
+.vrow .vn{font-weight:800;font-size:12px;min-width:28px}
+.vrow .vl{flex:1;font-size:13.5px;font-weight:600}
+.vrow .vp{font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink2)}
 .route-note{margin:12px 0;padding:11px 13px;border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:0 10px 10px 0;background:var(--surf2);color:var(--ink2);font-size:13.5px;line-height:1.5}
 .level-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin:12px 0 14px}
 .level-pill{min-width:0;padding:7px 5px;border:1px solid var(--line);border-radius:9px;background:var(--surf2);text-align:center;font-size:10px;line-height:1.25;color:var(--ink2)}
@@ -305,9 +324,11 @@ table.qt tr:last-child td{border-bottom:none}
   <div id="body"></div>
   <div id="foot"></div>
 </div>
-<script src="bank.js?v=2.2"></script>
+<script src="bank.js?v=3.0"></script>
 <script src="expansion.js?v=1.6"></script>
 <script src="knowledge.js?v=1.6"></script>
+<script src="sprint.js?v=1.0"></script>
+<script src="hft.js?v=1.0"></script>
 <script>
 (function(){
 "use strict";
@@ -317,9 +338,10 @@ var KNOWLEDGE=window.KNOWLEDGE||{};
 
 /* ---------- state ---------- */
 var LS='cooprep.v1';
-var ST={q:{},theory:{},days:[],today:null,theme:'light'};
+var ST={q:{},theory:{},days:[],today:null,theme:'light',best:{},exam:{}};
 (function(){try{var r=localStorage.getItem(LS);if(r){var o=JSON.parse(r);
-  ST.q=o.q||{};ST.theory=o.theory||{};ST.days=o.days||[];ST.today=o.today||null;ST.theme=o.theme||'light';}}catch(e){}})();
+  ST.q=o.q||{};ST.theory=o.theory||{};ST.days=o.days||[];ST.today=o.today||null;ST.theme=o.theme||'light';
+  ST.best=o.best||{};ST.exam=o.exam||{};}}catch(e){}})();
 function save(){try{localStorage.setItem(LS,JSON.stringify(ST));}catch(e){}}
 var THEME=ST.theme;
 document.documentElement.setAttribute('data-theme',THEME);
@@ -347,7 +369,9 @@ var ACC={
   c:{l:'#FF4B4B',d:'#EE5555',ll:'#EA2B2B',dl:'#D84848'},
   j:{l:'#00CD9C',d:'#33D6AE',ll:'#00A87F',dl:'#2BAF8C'},
   f:{l:'#FF9600',d:'#FFAB33',ll:'#E08600',dl:'#D98F22'},
-  pm:{l:'#0E7490',d:'#22A2BF',ll:'#0B5A70',dl:'#1C8AA6'}
+  pm:{l:'#0E7490',d:'#22A2BF',ll:'#0B5A70',dl:'#1C8AA6'},
+  s:{l:'#0F9D6E',d:'#34D399',ll:'#0B7A55',dl:'#22B07F'},
+  h:{l:'#4F46E5',d:'#818CF8',ll:'#3730A3',dl:'#6366F1'}
 };
 function hex2rgb(h){h=h.replace('#','');if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
   return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
@@ -466,6 +490,9 @@ var SKILL_GUIDES={
   pm9_rate:{title:'Сборка ставки дисконтирования',plain:'Ставка не берётся из воздуха: финансы дают базовую стоимость капитала, а риск конкретного проекта добавляется премией. Рискованный проект должен дисконтироваться по более высокой ставке.',steps:['Найди в условии базовую ставку капитала.','Найди премию за риск именно этого проекта.','Сложи их и назови итоговую ставку.','Проверь: зависимость от поставщика и срок — аргументы за более высокую премию.'],example:'Базовая ставка 6%, премия за риск 4%: проект дисконтируется по 10%.'},
   pm9_breakeven:{title:'Ставка при нулевом NPV',plain:'NPV становится нулевым, когда приведённый эффект в точности покрывает инвестицию. Из этого равенства можно найти ставку — это граница, выше которой проект уже не создаёт ценность.',steps:['Запиши равенство: приведённый поток = инвестиция.','Подставь потоки: эффект / (1 + r) = инвестиция.','Вырази r и назови ответ в процентах.','Скажи, что ставка выше этой границы делает проект убыточным по ценности.'],example:'Инвестиция 1 000k, возврат 1 120k через год: 1 120 / (1 + r) = 1 000 → r = 12%.'}
 };
+var PX=window.PREP_EXTRA||{};
+Object.keys(PX.skillNames||{}).forEach(function(k){SKILL_NAMES[k]=PX.skillNames[k];});
+Object.keys(PX.skillGuides||{}).forEach(function(k){SKILL_GUIDES[k]=PX.skillGuides[k];});
 function skillGuide(skill){return SKILL_GUIDES[skill]||{title:'Закрепление приёма',plain:'Сейчас мы спокойно повторим один способ решения. Сначала разберём, что означают числа, затем решим несколько похожих задач и постепенно уберём подсказки.',steps:['Назови, что дано.','Скажи, что нужно найти.','Выбери одну формулу или последовательность действий.','Проверь ответ здравым смыслом.'],example:'Сначала реши самый простой вариант этого типа, а потом перенеси тот же приём на новую формулировку.'};}
 /* вес типа для тренировки: слабые темы получают больше слотов */
 function typeWeight(t){
@@ -530,6 +557,14 @@ function isDue(q){var s=ST.q[q.id];if(!s)return false;
   return s.due!==undefined&&s.due<=dayNum();}       /* верный ответ возвращается по расписанию */
 function dueList(){return ALLQ.filter(isDue).sort(function(a,b){
   return (ST.q[a.id].due||0)-(ST.q[b.id].due||0);});}
+function modBy(id){for(var i=0;i<BANK.modules.length;i++)if(BANK.modules[i].id===id)return BANK.modules[i];return null;}
+/* конец серии: блиц и контрольная сохраняют результат */
+function endSession(){
+  S.endedAt=Date.now();screen='summary';markDay();
+  if(S.mode==='blitz'&&S.mid){var b=ST.best[S.mid];if(!b||S.correct>b.ok)ST.best[S.mid]={ok:S.correct,done:S.done,ts:Date.now()};S.record=!b||S.correct>b.ok;save();}
+  if(S.mode==='exam'&&S.mid){ST.exam[S.mid]={pct:S.done?Math.round(S.correct/S.done*100):0,ts:Date.now()};save();}
+  render();
+}
 function cur(){if(!S)return null;var it=S.list[S.idx];if(!it)return null;var t=TBY[it.tid];
   if(!t)return null;return{t:t,q:t.qs[it.qi]};}
 
@@ -561,7 +596,7 @@ function viewHome(){
   var pct=Math.min(100,tn/DAILY*100);
   var h='<div class="wrap">';
   h+='<div class="brandrow"><div><div class="brand">COO Prep</div>'
-   +'<div class="brand-s">Spectral · Project Manager, Back Office</div></div>';
+   +'<div class="brand-s">Spectral · Project Manager, Back Office · финал с CEO</div></div>';
   if(st>0)h+='<div class="streak"><b>'+st+'</b><span>'+(st===1?'день':'дней')+'</span></div>';
   h+='</div>';
   h+='<div class="card lip"><div class="hero-top"><span class="lbl">Дневная тренировка</span>'
@@ -593,7 +628,15 @@ function viewHome(){
       else if(s.ok===s.total&&s.total)h+='<span class="st ok">✓</span>';
       h+='<span class="nm">'+esc(t.title)+'</span><span class="cnt">'+s.ok+' из '+s.total+'</span></button>';
     });
-    h+='</div></div>';
+    h+='</div>';
+    if(m.intro)h+='<p class="mod-intro">'+esc(m.intro)+'</p>';
+    if(m.blitz||m.exam){
+      h+='<div class="btnrow mod-act">';
+      if(m.blitz)h+='<button class="btn sec" onclick="A.blitz(\''+m.id+'\')">Блиц '+Math.round(m.blitz.sec/60)+' мин'+(ST.best[m.id]?' · рекорд '+ST.best[m.id].ok:'')+'</button>';
+      if(m.exam){var ex=ST.exam[m.id];h+='<button class="btn sec" onclick="A.exam(\''+m.id+'\')">Контрольная'+(ex?' · '+ex.pct+'%'+(ex.pct>=m.exam.pass?' ✓':''):'')+'</button>';}
+      h+='</div>';
+    }
+    h+='</div>';
   });
   h+='<div class="acc'+(accProto?' open':'')+'"><button class="ah" aria-expanded="'+(accProto?'true':'false')+'" aria-controls="protocol-body" onclick="A.proto()">'
    +'<span>Протокол ответа на незнакомую задачу</span><span class="chev">›</span></button><div class="ab" id="protocol-body">'
@@ -650,6 +693,10 @@ function learnCard(t){
   if(k.say)h+='<div class="learn-label">Фраза, которую можно сказать на интервью</div><div class="learn-voice">'+esc(k.say)+'</div>';
   if(k.check&&k.check.length)h+='<div class="learn-label">Быстрая самопроверка</div><ul class="learn-check">'
     +k.check.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
+  if(k.hacks&&k.hacks.length)h+='<div class="learn-label">Хаки · '+k.hacks.length+'</div><div class="hacks">'
+    +k.hacks.map(function(x){return '<div class="hack"><div class="hn">'+esc(x.name)+'</div><div class="hh">'+esc(x.how)+'</div>'+(x.ex?'<div class="hx">'+esc(x.ex)+'</div>':'')+'</div>';}).join('')+'</div>';
+  if(k.deep&&k.deep.length)h+='<div class="learn-label">Глубже и как тренировать</div><ul class="learn-deep">'
+    +k.deep.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
   h+='</section>';
   return h;
 }
@@ -720,7 +767,7 @@ function headPrac(){
 }
 function viewPrac(){
   var c=cur();if(!c)return '';
-  var q=c.q,m=c.t._m,h='';
+  var q=c.q,m=c.t._m,k=KNOWLEDGE[c.t.id],h='';
   h+='<div class="wrap mid" style="'+accentStyle(m)+'"><div class="qwrap">';
   h+='<div class="qlabel">'+(q.kind==='open'?'Свободный ответ':q.kind==='mc'?'Выбери вариант':'Введи ответ')+' · '+esc(LEVEL_NAMES[q.level||1])+'</div>';
   h+='<div class="qtext">'+esc(q.t)+'</div>';
@@ -752,7 +799,7 @@ function viewPrac(){
     if(S.badInput)h+='<div class="tip" style="margin-top:14px">Не разобрал число. Набери цифрами: <b>120000</b>, <b>1,5</b> или коротко <b>120k</b>.</div>';
     if(S.hint)h+='<div class="hintbox">'+esc(q.hint||(BANK.hints&&BANK.hints[q.id])||(k&&k.hint)||c.t.method[0])+'</div>';
     h+='<div class="linkrow">';
-    if(!S.hint)h+='<button class="btn link" onclick="A.hint()">Подсказка</button>';
+    if(!S.hint&&S.mode!=='exam')h+='<button class="btn link" onclick="A.hint()">Подсказка</button>';
     if(q.kind!=='open')h+='<button class="btn link" onclick="A.dontKnow()">Не знаю</button>';
     h+='</div>';
   }
@@ -874,6 +921,7 @@ function viewSum(){
    +'<div><b class="'+(S.wrong.length?'r':'')+'">'+S.wrong.length+'</b><span>на повтор</span></div>'
    +'<div><b>'+todayN()+'</b><span>за сегодня</span></div></div>';
   h+='</div>';
+  h+=sessionVerdict();
   if(S.wrong.length){
     h+='<div class="sh">Разобрать заново</div><div class="wlist">';
     S.wrong.forEach(function(id){
@@ -887,6 +935,27 @@ function viewSum(){
     h+='<div style="margin-top:12px"><button class="btn" onclick="A.redoWrong()">Повторить ошибочные</button></div>';
   }
   h+='<div style="margin-top:10px"><button class="btn sec" onclick="A.home()">На главную</button></div>';
+  return h+'</div>';
+}
+
+function sessionVerdict(){
+  if(!S||(S.mode!=='blitz'&&S.mode!=='exam')||!S.mid)return '';
+  var m=modBy(S.mid),h='<div class="verdict">';
+  if(S.mode==='blitz'){
+    var avg=S.done?((S.endedAt-S.startedAt)/1000/S.done):0;
+    h+='<div class="vt">Блиц · '+esc(m.title)+'</div>';
+    h+='<p>Верно <b>'+S.correct+'</b> за '+Math.round(m.blitz.sec/60)+' мин · в среднем <b>'+(Math.round(avg*10)/10).toString().replace('.',',')+' с</b> на задачу.</p>';
+    h+='<p>'+(S.record?'Новый рекорд. ':'Рекорд: '+ST.best[S.mid].ok+'. ')+'Ориентир к встрече: 20+ верных за 2 минуты при точности выше 90%.</p>';
+    return h+'</div>';
+  }
+  var by={};S.res.forEach(function(r){var b=by[r.tid]||(by[r.tid]={n:0,ok:0,ms:0});b.n++;if(r.ok)b.ok++;b.ms+=r.ms;});
+  var pct=S.done?Math.round(S.correct/S.done*100):0,pass=pct>=m.exam.pass;
+  h+='<div class="vt">'+(pass?'Модуль закрыт':'Пока не закрыт')+' · порог '+m.exam.pass+'%</div>';
+  h+='<div class="vrows">';
+  m.types.forEach(function(t){var b=by[t.id];if(!b)return;var p=Math.round(b.ok/b.n*100),sec=Math.round(b.ms/b.n/1000);
+    h+='<button class="vrow'+(p<m.exam.pass?' weak':'')+'" onclick="A.open(\''+t.id+'\')"><span class="vn">'+esc(t.num)+'</span><span class="vl">'+esc(t.title)+'</span><span class="vp">'+b.ok+'/'+b.n+' · '+sec+' с</span></button>';});
+  h+='</div>';
+  h+='<p>'+(pass?'Ты решаешь этот тип задач уверенно и без подсказок. Дальше поддерживай форму блицем раз в день.':'Открой темы, отмеченные красным, пройди их уровни 3–5 и повтори контрольную. Засчитывается результат без подсказок.')+'</p>';
   return h+'</div>';
 }
 
@@ -905,7 +974,7 @@ window.A={
     if(mt)mt.setAttribute('content',THEME==='light'?'#FFFFFF':'#131F24');
     render();
   },
-  reset:function(){if(confirm('Сбросить весь прогресс?')){ST={q:{},theory:{},days:[],today:null,theme:THEME};save();render();}},
+  reset:function(){if(confirm('Сбросить весь прогресс?')){ST={q:{},theory:{},days:[],today:null,theme:THEME,best:{},exam:{}};save();render();}},
   start:function(id){var t=TBY[id];A.run(routeFor(t),'type');},
   startLevel:function(id,level){var t=TBY[id];var list=t.qs.map(function(q,i){return{tid:id,qi:i};}).filter(function(x){return(t.qs[x.qi].level||1)===level;});A.run(list,'level');},
   startShuffle:function(id){var t=TBY[id];A.run(shuffle(t.qs.map(function(q,i){return{tid:id,qi:i};})),'type');},
@@ -923,9 +992,24 @@ window.A={
   run:function(list,mode,startAt){
     if(!list.length)return;
     S={list:list,idx:startAt||0,mode:mode,answered:false,ok:null,user:'',pick:null,val:'',hint:false,revealed:false,
-       skipped:false,badInput:false,done:0,correct:0,wrong:[],startedAt:Date.now(),taskStart:Date.now(),endedAt:null,
+       skipped:false,badInput:false,done:0,correct:0,wrong:[],res:[],startedAt:Date.now(),taskStart:Date.now(),endedAt:null,
        deadline:(mode==='drill')?Date.now()+20*60*1000:null};
     screen='practice';render();
+  },
+  blitz:function(mid){
+    var m=modBy(mid);if(!m||!m.blitz)return;
+    var pool=[];m.types.forEach(function(t){t.qs.forEach(function(q,i){if(q.kind!=='open'&&(q.level||1)<=m.blitz.maxLevel)pool.push({tid:t.id,qi:i});});});
+    A.run(shuffle(pool).slice(0,80),'blitz');if(!S)return;S.mid=mid;S.deadline=Date.now()+m.blitz.sec*1000;render();
+  },
+  /* контрольная: поровну задач из каждой темы модуля, без подсказок */
+  exam:function(mid){
+    var m=modBy(mid);if(!m||!m.exam)return;
+    var per=Math.ceil(m.exam.n/m.types.length),list=[];
+    m.types.forEach(function(t){
+      var c=t.qs.map(function(q,i){return{tid:t.id,qi:i};}).filter(function(x){var q=t.qs[x.qi];return q.kind!=='open'&&(q.level||1)>=m.exam.minLevel;});
+      list=list.concat(shuffle(c).slice(0,per));
+    });
+    A.run(shuffle(list).slice(0,m.exam.n),'exam');if(S)S.mid=mid;
   },
   retry:function(){var b=badList();if(!b.length)return;
     A.run(shuffle(b.map(function(q){return{tid:q._t.id,qi:q._i};})),'type');},
@@ -999,7 +1083,7 @@ window.A={
     var c=cur();if(!c||S.answered)return;
     S.answered=true;S.ok=false;S.user='';S.skipped=true;S.badInput=false;
     record(c.q,false,Date.now()-S.taskStart,true,false);
-    S.done++;S.wrong.push(c.q.id);
+    S.done++;S.wrong.push(c.q.id);S.res.push({tid:c.t.id,ok:false,ms:Date.now()-S.taskStart});
     render();
   },
   reveal:function(){var el=document.getElementById('ans');if(el&&S)S.val=el.value;if(S)S.revealed=true;render();},
@@ -1010,11 +1094,14 @@ window.A={
     S.answered=true;S.ok=ok;S.user=user||'';S.skipped=false;S.badInput=false;
     record(c.q,ok,Date.now()-S.taskStart,false,!S.hint);
     S.done++;if(ok)S.correct++;else S.wrong.push(c.q.id);
+    S.res.push({tid:c.t.id,ok:!!ok,ms:Date.now()-S.taskStart});
     render();
+    /* в блице верный ответ сразу ведёт дальше: темп важнее разбора */
+    if(ok&&S.mode==='blitz'){var at=S.idx;setTimeout(function(){if(S&&S.mode==='blitz'&&S.answered&&S.idx===at&&screen==='practice')A.next();},450);}
   },
   next:function(){
     if(!S)return;
-    if(S.idx+1>=S.list.length){S.endedAt=Date.now();screen='summary';markDay();render();return;}
+    if(S.idx+1>=S.list.length){endSession();return;}
     S.idx++;S.answered=false;S.ok=null;S.user='';S.pick=null;S.val='';S.hint=false;S.revealed=false;
     S.skipped=false;S.badInput=false;S.taskStart=Date.now();
     render();
@@ -1040,7 +1127,7 @@ setInterval(function(){
     var left=S.deadline-Date.now();
     el.textContent=fmtMs(left);
     el.className='ptime'+(left<60000?' crit':left<300000?' over':'');
-    if(left<=0){S.endedAt=Date.now();screen='summary';markDay();render();}
+    if(left<=0)endSession();
   } else {
     var t=Date.now()-S.taskStart;
     el.textContent=fmtMs(t);
