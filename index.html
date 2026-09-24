@@ -66,8 +66,8 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .ptime{flex:0 0 auto;min-width:44px;text-align:right;font:800 13px/1 var(--ff);color:var(--ink3);font-variant-numeric:tabular-nums}
 .ptime.over{color:var(--warn)} .ptime.crit{color:var(--no)}
 .hrow{display:flex;align-items:center;gap:10px;max-width:620px;margin:0 auto}
-.hrow .ht{flex:1;min-width:0;font-size:16px;font-weight:800;letter-spacing:-.2px;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hrow .ht{flex:1;min-width:0;font-size:16px;font-weight:800;letter-spacing:-.2px;line-height:1.25;
+  overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 
 /* ---------- buttons (Duolingo: radius 12, lip 4px, uppercase, .8px) ---------- */
 .btn{position:relative;display:block;width:100%;min-height:50px;padding:14px 16px;border:none;border-radius:12px;
@@ -358,7 +358,8 @@ table.qt tr:last-child td{border-bottom:none}
 .trow .tc{flex:0 0 auto;font-size:11.5px;font-weight:700;color:var(--ink3);font-variant-numeric:tabular-nums}
 .trow .tc.r{color:var(--no)}
 .trow .chev{flex:0 0 auto;color:var(--ink3);font-size:18px;font-weight:800}
-.mcard .mod-intro{padding:0 14px;margin:0 0 10px}
+.mcard .mod-intro{padding:0 14px;margin:0 0 10px;cursor:pointer}
+.mod-intro.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .mcard .mod-act{padding:10px 14px 14px;margin:0;border-top:1px solid var(--line)}
 .mcard .mod-act .btn{font-size:12.5px}
 .homefoot{display:flex;justify-content:center;gap:4px;margin-top:22px}
@@ -424,6 +425,26 @@ table.qt tr:last-child td{border-bottom:none}
 .fbh .tm{margin-left:auto;flex:0 0 auto;font-size:12.5px;font-weight:800;color:var(--ink3);font-variant-numeric:tabular-nums}
 .fin .btnrow .btn.sec{flex:0 0 38%}
 
+/* ---------- v4.1 ---------- */
+.qtext.big{font-size:40px;font-weight:800;letter-spacing:-1px;text-align:center;padding:26px 0 8px;font-variant-numeric:tabular-nums}
+.ansbox.good{border-color:var(--okline);background:var(--okbg)} .ansbox.good .v{color:var(--ok)}
+.flinks{display:flex;justify-content:space-between;margin:-6px 0 2px}
+.flinks .btn.link{width:auto;min-height:34px;padding:4px 2px;font-size:13.5px}
+.ansbox.fa{margin:0 0 10px;min-height:56px;border-bottom-width:2px}
+.ansbox.fa .v{font-size:28px}
+.key{height:48px}
+.ticks{display:grid;gap:6px}
+.tick{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;padding:10px 12px;border:2px solid var(--line);border-radius:12px;background:var(--surf);
+  font:600 14px/1.45 var(--ff);color:var(--ink2);cursor:pointer}
+.tick .tb{flex:0 0 auto;width:20px;height:20px;margin-top:1px;border:2px solid var(--line);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff}
+.tick[aria-pressed="true"]{border-color:var(--okline);background:var(--okbg);color:var(--ink)}
+.tick[aria-pressed="true"] .tb{background:var(--ok);border-color:var(--ok)}
+.tick[aria-pressed="true"] .tb:after{content:'✓'}
+.tick[disabled]{cursor:default}
+.speak .btn{flex:1 1 auto}
+button:focus-visible,summary:focus-visible,textarea:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+@media (max-height:700px){.key{height:42px}.kp{gap:6px}.ansbox.fa{min-height:48px}.qtext.big{font-size:34px;padding:12px 0 4px}}
+
 /* ---------- v4: summary ---------- */
 .sumhead{display:flex;align-items:center;gap:16px;text-align:left;margin:10px 0 16px}
 .sumhead .ringwrap{margin:0}
@@ -451,7 +472,7 @@ table.qt tr:last-child td{border-bottom:none}
 <script src="knowledge.js?v=1.10"></script>
 <script src="sprint.js?v=1.0"></script>
 <script src="hft.js?v=1.0"></script>
-<script src="teach.js?v=1.0"></script>
+<script src="teach.js?v=1.1"></script>
 <script src="tools.js?v=1.3"></script>
 <script>
 (function(){
@@ -822,7 +843,7 @@ function checkNum(q,raw){
 }
 
 /* ---------- nav ---------- */
-var screen='home',typeId=null,S=null,pendingSkill=null,accTheory=false,accProto=false,lastNav=null,DAILY=12,CHUNK=12,homeScroll=0,SPEAK_SEC=90;
+var screen='home',typeId=null,S=null,pendingSkill=null,accTheory=false,accProto=false,lastNav=null,DAILY=12,CHUNK=12,homeScroll=0,SPEAK_SEC=90,PASS_TICKS=0.7;
 /* Интервальное повторение. Отвечено верно без подсказки — интервал растёт;
    ошибка, пропуск или ответ с подсказкой — интервал сбрасывается на сутки. */
 var INT=[1,2,4,7];
@@ -832,6 +853,20 @@ function isDue(q){var s=ST.q[q.id];if(!s)return false;
   return s.due!==undefined&&s.due<=dayNum();}       /* верный ответ возвращается по расписанию */
 function dueList(){return ALLQ.filter(isDue).sort(function(a,b){
   return (ST.q[a.id].due||0)-(ST.q[b.id].due||0);});}
+function plural(n,a,b,c){var m=n%10,h=n%100;return n+' '+((m===1&&h!==11)?a:(m>=2&&m<=4&&(h<12||h>14))?b:c);}
+function nz(n){return plural(n,'задача','задачи','задач');}
+/* Учёт ответа. Ошибку в обычной тренировке показываем ещё раз в конце подхода:
+   вспомнить решение через несколько минут полезнее, чем прочитать его. Повторная
+   попытка не меняет расписание повторов и счёт — это закрепление, а не экзамен. */
+var NO_RETRY={exam:1,blitz:1,rehearse:1};
+function tally(c,ok,skipped){
+  var it=S.list[S.idx],ms=Date.now()-S.taskStart;
+  if(it.retry){if(ok)S.fixed=(S.fixed||0)+1;return;}
+  record(c.q,ok,ms,skipped,!skipped&&!S.hint);
+  S.done++;if(ok)S.correct++;else S.wrong.push(c.q.id);
+  S.res.push({tid:c.t.id,ok:!!ok,ms:ms});
+  if(!ok&&!NO_RETRY[S.mode]&&c.q.kind!=='open')S.list.push({tid:it.tid,qi:it.qi,retry:true});
+}
 function buzz(ok){try{if(navigator.vibrate)navigator.vibrate(ok?12:[25,50,25]);}catch(e){}}
 function modBy(id){for(var i=0;i<BANK.modules.length;i++)if(BANK.modules[i].id===id)return BANK.modules[i];return null;}
 /* конец серии: блиц и контрольная сохраняют результат */
@@ -850,8 +885,8 @@ function render(){
   var th='',bh='',fh='';
   if(screen==='home'){bh=viewHome();}
   else if(screen==='type'){th=headType();bh=viewType();fh=footType();}
-  else if(screen==='strategyIntro'){th=headStrategy();bh=viewStrategyIntro();}
-  else if(screen==='skillIntro'){th=headSkill();bh=viewSkillIntro();}
+  else if(screen==='strategyIntro'){th=headStrategy();bh=viewStrategyIntro();fh='<div class="fin"><button class="btn" onclick="A.strategy()">Начать · подход из '+nz(CHUNK)+'</button></div>';}
+  else if(screen==='skillIntro'){th=headSkill();bh=viewSkillIntro();fh=footSkill();}
   else if(screen==='practice'){th=headPrac();bh=viewPrac();fh=footPrac();}
   else if(screen==='summary'){th=headSum();bh=viewSum();}
   if(lastNav&&lastNav.indexOf('home|')===0&&nav!==lastNav)homeScroll=body.scrollTop;
@@ -890,7 +925,7 @@ function topicRow(t){
 function modCard(m){
   var tot=0,ok=0;m.types.forEach(function(t){var s=tStat(t);tot+=s.total;ok+=s.ok;});
   var h='<div class="mcard" style="'+accentStyle(m)+'"><div class="mcard-h"><span class="mod-dot"></span><span class="mod-t">'+esc(m.title)+'</span><span class="mod-c">'+ok+'/'+tot+'</span></div>';
-  if(m.intro)h+='<p class="mod-intro">'+esc(m.intro)+'</p>';
+  if(m.intro)h+='<p class="mod-intro clamp" onclick="this.classList.toggle(\'clamp\')">'+esc(m.intro)+'</p>';
   m.types.forEach(function(t){h+=topicRow(t);});
   if(m.blitz||m.exam||m.rehearse){
     h+='<div class="btnrow mod-act">';
@@ -955,12 +990,11 @@ function viewStrategyIntro(){
   h+='<p class="learn-plain">Каждая задача сначала разбирается как сцена: что происходит, что реально спрашивает COO, по какой логике думать и как звучит сильный ответ. После этого ты пишешь свой ответ и сравниваешь его с эталоном.</p>';
   BANK.strategy.order.forEach(function(id){
     var b=BANK.strategy.types[id], n=ALLQ.filter(function(q){return q._t.id===id;}).length;
-    h+='<div class="learn-label">'+esc(b.title)+' · '+n+' задач</div>';
+    h+='<div class="learn-label">'+esc(b.title)+' · '+nz(n)+'</div>';
     h+='<div class="learn-cue">'+esc(b.situation)+'</div>';
   });
   h+='<div class="strategy-note"><b>Честная оговорка:</b> '+esc(BANK.strategy.note)+'</div>';
-  h+='<button class="btn" style="margin-top:16px" onclick="A.strategy()">Начать · подход из '+CHUNK+' задач</button>';
-  h+='<div style="margin-top:10px"><button class="btn sec" onclick="A.home()">Вернуться к тренировке</button></div>';
+
   h+='</section></div>';
   return h;
 }
@@ -1046,7 +1080,7 @@ function viewType(){
 function footType(){
   var t=TBY[typeId];if(!t)return '';
   var nl=nextLevel(t),lv=nl||5,n=levelChunk(t,lv).length;
-  var label=(nl?(started(t)?'Продолжить':'Начать')+' · уровень '+lv:'Повторить уровень 5')+' · '+n+' задач';
+  var label=(nl?(started(t)?'Продолжить':'Начать')+' · уровень '+lv:'Повторить уровень 5')+' · '+nz(n);
   return '<div class="fin" style="'+accentStyle(t._m)+'"><button class="btn" onclick="A.startLevel(\''+t.id+'\','+lv+')">'+label+'</button></div>';
 }
 
@@ -1054,7 +1088,7 @@ function footType(){
 function headSkill(){return '<div class="hrow"><button class="xbtn" aria-label="Назад к теме" title="Назад" onclick="A.leave()">‹</button><div class="ht">Перед закреплением</div></div>';}
 function viewSkillIntro(){
   var p=pendingSkill;if(!p)return '';
-  var g=skillGuide(p.skill),h='<div class="wrap mid"><section class="learn" aria-label="Объяснение приёма">';
+  var t0=TBY[p.list[0].tid],g=skillGuide(p.skill),h='<div class="wrap" style="'+accentStyle(t0._m)+'"><section class="learn" aria-label="Объяснение приёма">';
   h+='<div class="learn-kicker">Сначала поймём, потом посчитаем</div><h3>'+esc(g.title)+'</h3>';
   h+='<p class="learn-plain">'+esc(g.plain)+'</p>';
   h+='<div class="learn-label">Как действовать</div><ol class="learn-list">'+g.steps.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>';
@@ -1063,36 +1097,41 @@ function viewSkillIntro(){
   else{h+='<div class="exq">'+esc(g.example.q)+'</div><ol>'+g.example.a.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>';}
   h+='</div>';
   if(g.next&&g.next.length)h+='<div class="learn-label">Как получается короткая формула</div><div class="learn-example"><ol>'+g.next.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol></div>';
-  h+='<div class="route-note"><b>В серии '+p.list.length+' задач.</b> Первые будут похожими и простыми. Затем изменятся числа, формулировка или контекст. Твоя цель — объяснять ход, а не угадывать знакомый шаблон.</div>';
-  h+='<button class="btn" onclick="A.startSkill()">Начать серию · '+p.list.length+' задач</button>';
-  h+='<div style="margin-top:10px"><button class="btn sec" onclick="A.leave()">Вернуться к теме</button></div>';
+  h+='<div class="route-note"><b>В серии '+nz(p.list.length)+'.</b> Первые похожи на пример. Затем меняются числа, формулировка или контекст. Цель — объяснить ход, а не угадать знакомый шаблон.</div>';
   return h+'</section></div>';
+}
+function footSkill(){var p=pendingSkill;if(!p)return '';var t0=TBY[p.list[0].tid];
+  return '<div class="fin" style="'+accentStyle(t0._m)+'"><button class="btn" onclick="A.startSkill()">Начать серию · '+nz(p.list.length)+'</button></div>';
 }
 
 /* ---------- practice ---------- */
 function headPrac(){
   var c=cur();if(!c)return '';
   var prog=Math.round(S.idx/S.list.length*100);
+  if(S.mode==='blitz'&&S.deadline){var tot=modBy(S.mid).blitz.sec*1000;prog=Math.round(Math.min(1,1-(S.deadline-Date.now())/tot)*100);}
   var tm=S.deadline?fmtMs(Math.max(0,S.deadline-Date.now())):fmtMs(Date.now()-S.taskStart);
+  var cnt=S.mode==='blitz'?('✓ '+S.correct):((S.idx+1)+'/'+S.list.length);
   return '<div class="prow" style="'+accentStyle(c.t._m)+'">'
-   +'<button class="xbtn" aria-label="Выйти из тренировки" title="Выйти" onclick="A.leave()">✕</button>'
+   +'<button class="xbtn" aria-label="Выйти из тренировки" title="Выйти" onclick="A.quit()">✕</button>'
    +'<div class="track"><i style="width:'+prog+'%"></i></div>'
-   +'<span class="pcount">'+(S.idx+1)+'/'+S.list.length+'</span>'
+   +'<span class="pcount" id="pcount">'+cnt+'</span>'
    +'<span class="ptime" id="timer" title="'+(S.deadline?'Осталось времени':'Время на задачу')+'">'+tm+'</span>'
    +'</div>';
 }
 var MODE_NAMES={blitz:'Блиц',exam:'Контрольная',rehearse:'Репетиция',review:'Повтор',drill:'Тренировка дня',strategy:'Кейс'};
 function viewPrac(){
   var c=cur();if(!c)return '';
-  var q=c.q,m=c.t._m,k=KNOWLEDGE[c.t.id],h='',isCase=BANK.strategy.order.indexOf(q._t.id)>=0;
+  var it=S.list[S.idx],q=c.q,m=c.t._m,k=KNOWLEDGE[c.t.id],h='',isCase=BANK.strategy.order.indexOf(q._t.id)>=0;
   h+='<div class="wrap" style="'+accentStyle(m)+'"><div class="qwrap">';
   h+='<div class="qmeta"><span class="qn">'+esc(c.t.num)+'</span><span class="qlv">'+esc(c.t.title)+' · ур. '+(q.level||1)+'</span>'
-   +(MODE_NAMES[S.mode]?'<span style="margin-left:auto">'+MODE_NAMES[S.mode]+'</span>':'')+'</div>';
-  h+='<div class="qtext'+(q.t.length>150?' long':'')+'">'+esc(q.t)+'</div>';
+   +(it.retry?'<span style="margin-left:auto;color:var(--warn)">Ещё раз</span>':MODE_NAMES[S.mode]?'<span style="margin-left:auto">'+MODE_NAMES[S.mode]+'</span>':'')+'</div>';
+  var big=q.t.length<=32&&/^[0-9\s×·÷+\-−²³√,.()=?%\/^]+$/.test(q.t);
+  h+='<div class="qtext'+(big?' big':q.t.length>150?' long':'')+'">'+esc(q.t)+'</div>';
   if(isCase)h+=caseCard(c);
+  if(q.kind==='num'&&S.hint&&!S.answered)h+='<div class="hintbox">'+esc(hintText(c))+'</div>';
   if(q.table)h+='<div class="tw" style="margin-top:16px">'+tableHtml(q.table)+'</div>';
   if(q.kind==='num'){
-    h+='<div class="ansbox">'+(S.val?'<span class="v">'+esc(S.val.replace(/^-/,'−'))+'</span>':'<span class="ph">Набери ответ</span>')
+    if(S.answered&&!S.skipped&&S.ok)h+='<div class="ansbox good">'+(S.val?'<span class="v">'+esc(S.val.replace(/^-/,'−'))+'</span>':'<span class="ph">Набери ответ</span>')
      +(q.unit?'<span class="u">'+esc(q.unit)+'</span>':'')+'</div>';
   } else if(q.kind==='mc'){
     h+='<div style="margin-top:18px">';
@@ -1106,32 +1145,47 @@ function viewPrac(){
     h+='</div>';
   } else {
     if(!S.revealed){
-      h+='<div class="speak"><button class="btn sec" onclick="A.speak()">'+(S.speakAt?'Стоп':'Ответить вслух · '+fmtMs(SPEAK_SEC*1000))+'</button>'
-       +'<span class="sc'+(S.speakAt?' on':'')+'" id="spk">'+(S.speakAt?fmtMs(Math.max(0,S.speakAt+SPEAK_SEC*1000-Date.now())):(S.spoke?'✓':''))+'</span></div>';
-      h+='<textarea class="ta" id="ans" placeholder="Тезисы ответа: структура, цифры, рекомендация. Можно не писать, а сказать вслух." autocorrect="off" spellcheck="false">'+esc(S.val||'')+'</textarea>';
+      var sec=speakSec(q);
+      h+='<div class="speak"><button class="btn sec" onclick="A.speak()">'+(S.speakAt?'Закончил':'Засечь ответ вслух · '+fmtMs(sec*1000))+'</button>'
+       +'<span class="sc'+(S.speakAt?' on':'')+'" id="spk">'+(S.speakAt?fmtMs(Math.max(0,S.speakAt+sec*1000-Date.now())):(S.spoke?'✓':''))+'</span></div>';
+      h+='<textarea class="ta" id="ans" placeholder="Тезисы, если удобнее писать. Можно сразу сравнить с эталоном после ответа вслух." autocorrect="off" spellcheck="false">'+esc(S.val||'')+'</textarea>';
     } else {
       h+=refCard(c);
     }
   }
-  if(!S.answered&&!S.revealed){
+  if(!S.answered&&!S.revealed&&q.kind!=='num'){
     if(S.badInput)h+='<div class="tip" style="margin-top:14px">Не разобрал число. Набери цифрами: <b>120000</b>, <b>1,5</b> или коротко <b>120k</b>.</div>';
-    if(S.hint)h+='<div class="hintbox">'+esc(q.hint||(BANK.hints&&BANK.hints[q.id])||(q.skill&&SKILL_GUIDES[q.skill]&&SKILL_GUIDES[q.skill].steps[0])||(k&&k.hint)||c.t.method[0])+'</div>';
+    if(S.hint)h+='<div class="hintbox">'+esc(hintText(c))+'</div>';
     h+='<div class="linkrow">';
-    if(!S.hint&&S.mode!=='exam')h+='<button class="btn link" onclick="A.hint()">Подсказка</button>';
+    if(!S.hint&&S.mode!=='exam'&&S.mode!=='blitz')h+='<button class="btn link" onclick="A.hint()">Подсказка</button>';
     if(q.kind!=='open')h+='<button class="btn link" onclick="A.dontKnow()">Не знаю</button>';
     h+='</div>';
   }
   if(S.answered&&q.kind!=='open')h+=solCard(c);
-  if(S.answered&&q.kind==='open'&&!S.ok)h+=reviewBits(c);
+  if(S.answered&&q.kind==='open'&&!S.ok){var miss=tickItems(q).filter(function(x,i){return !S.ticks[i];});
+    if(miss.length)h+='<div class="why"><b>Чего не хватило:</b><ul style="margin:6px 0 0;padding-left:18px">'+lis(miss)+'</ul></div>';
+    h+=reviewBits(c);}
   h+='</div></div>';
   return h;
 }
+function hintText(c){var q=c.q,k=KNOWLEDGE[c.t.id];return q.hint||(BANK.hints&&BANK.hints[q.id])||(q.skill&&SKILL_GUIDES[q.skill]&&SKILL_GUIDES[q.skill].steps[0])||(k&&k.hint)||c.t.method[0];}
+function tickItems(q){return (q.checklist&&q.checklist.length)?q.checklist:(q.model||[]);}
+/* время на ответ вслух берём из условия («за 45 секунд», «за минуту»), иначе 90 с */
+function speakSec(q){var t=q.t,m;
+  if((m=t.match(/(\d+)\s*(секунд|сек\b|с\b)/)))return +m[1];
+  if(/за минуту|одну минуту|1 минут/.test(t))return 60;
+  if((m=t.match(/(\d+)\s*минут/)))return +m[1]*60;
+  return SPEAK_SEC;}
 function lis(a){return a.map(function(x){return '<li>'+esc(x)+'</li>';}).join('');}
 function refCard(c){
   var q=c.q,b=BANK.strategy.types[q._t.id],h='<div class="sol"><div class="hd"><span>Сравни с эталоном</span><span class="ln"></span></div>';
   if(S.val)h+='<div class="learn-example" style="margin-bottom:12px"><div class="lbl" style="margin-bottom:5px">Твой ответ</div><div class="sp" style="white-space:pre-wrap">'+esc(S.val)+'</div></div>';
-  if(q.model&&q.model.length)h+='<ol>'+lis(q.model)+'</ol>';
-  if(q.checklist&&q.checklist.length)h+='<div class="hd" style="margin-top:14px"><span>Проверь у себя</span><span class="ln"></span></div><ul class="learn-check">'+lis(q.checklist)+'</ul>';
+  var items=tickItems(q);
+  if(q.checklist&&q.checklist.length&&q.model&&q.model.length)h+='<details class="disc" style="margin:0 0 12px"'+(S.answered?'':' open')+'><summary>Эталонный ответ</summary><div class="db"><ol>'+lis(q.model)+'</ol></div></details>';
+  if(items.length){
+    h+='<div class="lbl" style="margin:4px 0 8px">'+(S.answered?'Что было в ответе':'Отметь, что было в твоём ответе')+'</div><div class="ticks">'
+     +items.map(function(x,i){return '<button class="tick" aria-pressed="'+!!S.ticks[i]+'"'+(S.answered?' disabled':'')+' onclick="A.tick('+i+')"><span class="tb"></span><span>'+esc(x)+'</span></button>';}).join('')+'</div>';
+  }
   if(b&&b.sample)h+='<details class="disc"><summary>Пример сильного ответа</summary><div class="db"><ol>'+lis(b.sample)+'</ol></div></details>';
   return h+'</div>';
 }
@@ -1195,19 +1249,20 @@ function ansLine(c){
   }
   if(q.kind==='num')return S.ok?('<b>'+right+'</b>'):('Верно: <b>'+right+'</b>');
   if(q.kind==='mc')return S.ok?'':'Верно: <b>'+String.fromCharCode(65+q.correct)+'</b>';
-  return S.ok?'Засчитано':'Вернётся на повтор завтра';
+  return S.ok?'Вернётся по расписанию':'Вернётся на повтор завтра';
 }
 function footPrac(){
   var c=cur();if(!c)return '';
   var q=c.q;
   if(S.answered){
     var ok=S.ok, skip=!!S.skipped;
-    var acc=skip?'var(--warn)':(ok?'var(--ok)':'var(--no)');
-    var on=skip?(THEME==='light'?'#FFFFFF':'#131F24'):(ok?'var(--ongreen)':'#FFFFFF');
+    var soft=skip||(q.kind==='open'&&!ok);
+    var acc=soft?'var(--warn)':(ok?'var(--ok)':'var(--no)');
+    var on=soft?(THEME==='light'?'#FFFFFF':'#131F24'):(ok?'var(--ongreen)':'#FFFFFF');
     var sec=Math.round((S.answeredAt-S.taskStart)/1000);
     return '<div class="fin" style="--acc:'+acc+';--on:'+on+'">'
-     +'<div class="fbh"><div class="ic">'+(skip?'!':(ok?'✓':'✕'))+'</div>'
-     +'<div class="tx"><div class="t">'+(skip?'Разберём':(ok?'Верно':'Неверно'))+'</div><div class="a">'+ansLine(c)+'</div></div>'
+     +'<div class="fbh"><div class="ic">'+(soft?'!':(ok?'✓':'✕'))+'</div>'
+     +'<div class="tx"><div class="t">'+(skip?'Разберём':q.kind==='open'?(ok?'Засчитано':'Добрать'):(ok?'Верно':'Неверно'))+'</div><div class="a">'+ansLine(c)+'</div></div>'
      +(q.kind!=='open'&&!skip?'<span class="tm">'+sec+' с</span>':'')+'</div>'
      +'<button class="btn" style="--acc:var(--green);--accl:var(--greenl);--on:var(--ongreen)" onclick="A.next()">'
      +(S.idx+1>=S.list.length?'Завершить':'Дальше')+'</button></div>';
@@ -1222,12 +1277,24 @@ function footPrac(){
       kp+='<button class="'+cls+'"'+(dis?' disabled':'')+' aria-label="'+({del:'Стереть','-':'Минус',k:'тысяч',m:'миллионов',',':'Запятая'}[k]||k)+'" onclick="A.key(\''+k+'\')">'+lab+'</button>';
     });});
     kp+='</div>';
-    return '<div class="fin">'+kp+'<button class="btn"'+((S.val?'':' disabled'))
+    var ab='<div class="ansbox fa">'+(S.val?'<span class="v">'+esc(S.val.replace(/^-/,'\u2212'))+'</span>':'<span class="ph">Набери ответ</span>')
+     +(q.unit?'<span class="u">'+esc(q.unit)+'</span>':'')+'</div>';
+    var fl='';
+    if(S.badInput)fl+='<div class="tip" style="margin:0 0 8px">Не разобрал число. Набери цифрами: <b>120000</b>, <b>1,5</b> или <b>120k</b>.</div>';
+    fl+='<div class="flinks">'+(!S.hint&&S.mode!=='exam'&&S.mode!=='blitz'?'<button class="btn link" onclick="A.hint()">Подсказка</button>':'<span></span>')
+     +'<button class="btn link" onclick="A.dontKnow()">Не знаю</button></div>';
+    return '<div class="fin">'+fl+ab+kp+'<button class="btn"'+((S.val?'':' disabled'))
      +' style="--acc:var(--green);--accl:var(--greenl);--on:var(--ongreen)" onclick="A.check()">Проверить</button></div>';
   }
   if(q.kind==='mc'){
     return '<div class="fin"><button class="btn"'+((S.pick===null||S.pick===undefined)?' disabled':'')
      +' style="--acc:var(--green);--accl:var(--greenl);--on:var(--ongreen)" onclick="A.check()">Проверить</button></div>';
+  }
+  if(S.revealed&&tickItems(q).length){
+    var n=tickItems(q).length,x=0;for(var i=0;i<n;i++)if(S.ticks[i])x++;
+    var pass=x/n>=PASS_TICKS;
+    return '<div class="fin"><div class="lbl" style="text-align:center;margin-bottom:8px">'+x+' из '+n+' · засчитывается от '+Math.ceil(n*PASS_TICKS)+'</div>'
+     +'<button class="btn" style="'+(pass?'--acc:var(--green);--accl:var(--greenl);--on:var(--ongreen)':'--acc:var(--warn);--accl:var(--warn);--on:#FFFFFF')+'" onclick="A.finish('+pass+',S.val)">'+(pass?'Засчитать':'Добрать позже')+'</button></div>';
   }
   if(S.revealed){
     return '<div class="fin"><div class="lbl" style="text-align:center;margin-bottom:8px">Честно: ответ покрыл пункты эталона?</div><div class="btnrow">'
@@ -1249,8 +1316,8 @@ function viewSum(){
   var head=!done?'Подход прерван':pct>=90?'Уверенно':pct>=70?'Хорошо, есть что добрать':pct>=50?'Половина — разберём ошибки':'Сначала разбор, потом повтор';
   var h='<div class="wrap">';
   h+='<div class="sumhead"><div class="ringwrap">'+ring(pct,col,92)+'<div class="ringtxt"><b>'+pct+'%</b></div></div>'
-   +'<div><div class="sl">'+head+'</div><div class="ss">Верно '+ok+' из '+done+' · '+fmtMs(dur)+(done?' · в среднем '+avg+' с на задачу':'')+'<br>За сегодня решено '+todayN()+'</div></div></div>';
-  if(S.rest&&S.rest.length)h+='<button class="btn" onclick="A.more()">Следующий подход · '+Math.min(CHUNK,S.rest.length)+' задач</button><div style="height:10px"></div>';
+   +'<div><div class="sl">'+head+'</div><div class="ss">Верно '+ok+' из '+done+' · '+fmtMs(dur)+(done?' · в среднем '+avg+' с на задачу':'')+(S.fixed?'<br>Исправлено при повторе: '+S.fixed:'')+'<br>За сегодня решено '+todayN()+'</div></div></div>';
+  if(S.rest&&S.rest.length)h+='<button class="btn" onclick="A.more()">Следующий подход · '+nz(Math.min(CHUNK,S.rest.length))+'</button><div style="height:10px"></div>';
   h+=sessionVerdict();
   if(S.wrong.length){
     h+='<div class="sh">Разобрать заново</div><div class="wlist">';
@@ -1330,12 +1397,12 @@ window.A={
     if(list.length){pendingSkill={skill:skill,list:list.map(function(q){return{tid:q._t.id,qi:q._i};})};S=null;screen='skillIntro';render();}
   },
   startSkill:function(){if(!pendingSkill)return;var p=pendingSkill;pendingSkill=null;A.run(p.list,'skill');},
-  jump:function(id,i){var t=TBY[id];A.run(t.qs.map(function(q,j){return{tid:id,qi:j};}),'type',i);},
+  jump:function(id,i){var t=TBY[id];A.chunked(t.qs.map(function(q,j){return{tid:id,qi:j};}).slice(i),'type');},
   run:function(list,mode,startAt,withClock){
     if(!list.length)return;
     S={list:list,idx:startAt||0,mode:mode,answered:false,ok:null,user:'',pick:null,val:'',hint:false,revealed:false,
        skipped:false,badInput:false,done:0,correct:0,wrong:[],res:[],startedAt:Date.now(),taskStart:Date.now(),endedAt:null,
-       deadline:(mode==='drill'&&withClock)?Date.now()+20*60*1000:null};
+       ticks:{},fixed:0,deadline:(mode==='drill'&&withClock)?Date.now()+20*60*1000:null};
     screen='practice';render();
   },
   /* репетиция урока: ключевые части сценария подряд, общий таймер */
@@ -1416,6 +1483,8 @@ window.A={
     var s=ST.q[qid];if(!s)return;
     s.cause=cause;ST.q[qid]=s;save();render();
   },
+  /* выход из подхода: решённое уже сохранено, но итог подхода потеряется — спросим, если сделано 3+ */
+  quit:function(){if(S&&screen==='practice'&&S.done>=3&&!confirm('Выйти из подхода? Ответы сохранены, итог подхода не покажется.'))return;A.leave();},
   leave:function(){var fromStrategy=!!(S&&S.mode==='strategy');S=null;if(fromStrategy)typeId=null;screen=(!fromStrategy&&typeId)?'type':'home';render();},
   hint:function(){if(!S)return;var el=document.getElementById('ans');
     if(el&&el.value!==undefined)S.val=el.value;S.hint=true;render();},
@@ -1453,19 +1522,17 @@ window.A={
   dontKnow:function(){
     var c=cur();if(!c||S.answered)return;
     S.answered=true;S.answeredAt=Date.now();S.ok=false;S.user='';S.skipped=true;S.badInput=false;buzz(false);
-    record(c.q,false,Date.now()-S.taskStart,true,false);
-    S.done++;S.wrong.push(c.q.id);S.res.push({tid:c.t.id,ok:false,ms:Date.now()-S.taskStart});
+    tally(c,false,true);
     render();
   },
   reveal:function(){var el=document.getElementById('ans');if(el&&S)S.val=el.value;if(S){S.revealed=true;S.speakAt=null;}render();},
   selfGood:function(){A.finish(true,S.val);},
+  tick:function(i){if(!S||S.answered)return;S.ticks[i]=!S.ticks[i];render();},
   selfBad:function(){A.finish(false,S.val);},
   finish:function(ok,user){
     var c=cur();if(!c||S.answered)return;
     S.answered=true;S.answeredAt=Date.now();S.ok=ok;S.user=user||'';S.skipped=false;S.badInput=false;S.speakAt=null;buzz(ok);
-    record(c.q,ok,Date.now()-S.taskStart,false,!S.hint);
-    S.done++;if(ok)S.correct++;else S.wrong.push(c.q.id);
-    S.res.push({tid:c.t.id,ok:!!ok,ms:Date.now()-S.taskStart});
+    tally(c,ok,false);
     render();
     /* в блице верный ответ сразу ведёт дальше: темп важнее разбора */
     if(ok&&S.mode==='blitz'){var at=S.idx;setTimeout(function(){if(S&&S.mode==='blitz'&&S.answered&&S.idx===at&&screen==='practice')A.next();},450);}
@@ -1474,7 +1541,7 @@ window.A={
     if(!S)return;
     if(S.idx+1>=S.list.length){endSession();return;}
     S.idx++;S.answered=false;S.ok=null;S.user='';S.pick=null;S.val='';S.hint=false;S.revealed=false;
-    S.skipped=false;S.badInput=false;S.taskStart=Date.now();S.speakAt=null;S.spoke=false;
+    S.skipped=false;S.badInput=false;S.taskStart=Date.now();S.speakAt=null;S.spoke=false;S.ticks={};
     render();
   }
 };
@@ -1496,7 +1563,7 @@ document.addEventListener('keydown',function(e){
 setInterval(function(){
   if(screen!=='practice'||!S)return;
   var sp=document.getElementById('spk');
-  if(sp&&S.speakAt){var sl=S.speakAt+SPEAK_SEC*1000-Date.now();sp.textContent=fmtMs(Math.max(0,sl));
+  if(sp&&S.speakAt){var cq=cur(),sl=S.speakAt+(cq?speakSec(cq.q):SPEAK_SEC)*1000-Date.now();sp.textContent=fmtMs(Math.max(0,sl));
     if(sl<=0){S.speakAt=null;S.spoke=true;var ta=document.getElementById('ans');if(ta)S.val=ta.value;buzz(false);render();}}
   var el=document.getElementById('timer');if(!el)return;
   if(!S.deadline){if(!S.answered)el.textContent=fmtMs(Date.now()-S.taskStart);return;}
@@ -1506,6 +1573,22 @@ setInterval(function(){
   if(left<=0)endSession();
 },1000);
 
+/* кнопка «назад» на телефоне ведёт по экранам приложения, а не закрывает его */
+try{history.replaceState({app:'root'},'');}catch(e){}
+function backStep(){
+  if(screen==='practice'){A.quit();return;}
+  if(screen==='skillIntro'){A.leave();return;}
+  if(screen!=='home')A.home();
+}
+window.addEventListener('popstate',function(){
+  if(screen==='home')return;
+  backStep();
+  if(screen!=='home'){try{history.pushState({app:'in'},'');}catch(e){}}
+});
+var _render=render;render=function(){_render();
+  if(screen!=='home'&&(!history.state||history.state.app!=='in')){try{history.pushState({app:'in'},'');}catch(e){}}
+  else if(screen==='home'&&history.state&&history.state.app==='in'){try{history.back();}catch(e){}}
+};
 if('serviceWorker' in navigator){
   window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(function(){});});
 }
