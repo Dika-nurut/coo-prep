@@ -1,4 +1,4 @@
-const CACHE = 'cooprep-v41';
+const CACHE = 'cooprep-v42';
 const ASSETS = ['./', './index.html', './bank.js?v=3.3', './expansion.js?v=3.2', './knowledge.js?v=1.10', './sprint.js?v=1.0', './hft.js?v=1.0', './teach.js?v=1.0', './tools.js?v=1.3', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {

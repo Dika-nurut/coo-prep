@@ -14,8 +14,9 @@
 <style>
 /* ---------- tokens: Duolingo light / dark ---------- */
 :root{
+  --ff:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   --bg:#FFFFFF; --surf:#FFFFFF; --surf2:#F7F7F7; --line:#E5E5E5;
-  --ink:#4B4B4B; --ink2:#777777; --ink3:#969BA0;
+  --ink:#3C3C3C; --ink2:#5E6366; --ink3:#8A9095;
   --green:#58CC02; --greenl:#58A700; --ongreen:#FFFFFF;
   --blue:#1CB0F6; --bluel:#1899D6; --selbg:#DDF4FF;
   --ok:#58A700; --okbg:#D7FFB8; --okline:#A5ED6E;
@@ -35,7 +36,7 @@ html[data-theme="dark"]{
 html,body{height:100%;overflow:hidden;overscroll-behavior:none}
 body{
   background:var(--bg);color:var(--ink);
-  font:400 16px/1.5 ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font:400 16px/1.5 var(--ff);
   -webkit-text-size-adjust:100%;touch-action:manipulation;-webkit-user-select:none;user-select:none;
 }
 input,textarea{-webkit-user-select:text;user-select:text}
@@ -53,7 +54,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 
 /* ---------- top bar ---------- */
 .xbtn{flex:0 0 auto;width:32px;height:32px;border:none;background:none;color:var(--ink3);
-  font:800 22px/1 inherit;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  font:800 22px/1 var(--ff);cursor:pointer;display:flex;align-items:center;justify-content:center}
 .xbtn:active{transform:scale(.9)}
 .prow{display:flex;align-items:center;gap:12px}
 .track{flex:1;height:16px;border-radius:99px;background:var(--line);overflow:hidden}
@@ -61,8 +62,8 @@ input,textarea{-webkit-user-select:text;user-select:text}
   transition:width .35s cubic-bezier(.2,.8,.3,1)}
 .track>i:after{content:'';position:absolute;left:6px;right:6px;top:3px;height:4px;border-radius:99px;background:rgba(255,255,255,.4)}
 .track.sm{height:12px}
-.pcount{flex:0 0 auto;font:800 14px/1 inherit;color:var(--ink2);font-variant-numeric:tabular-nums}
-.ptime{flex:0 0 auto;min-width:44px;text-align:right;font:800 13px/1 inherit;color:var(--ink3);font-variant-numeric:tabular-nums}
+.pcount{flex:0 0 auto;font:800 14px/1 var(--ff);color:var(--ink2);font-variant-numeric:tabular-nums}
+.ptime{flex:0 0 auto;min-width:44px;text-align:right;font:800 13px/1 var(--ff);color:var(--ink3);font-variant-numeric:tabular-nums}
 .ptime.over{color:var(--warn)} .ptime.crit{color:var(--no)}
 .hrow{display:flex;align-items:center;gap:10px;max-width:620px;margin:0 auto}
 .hrow .ht{flex:1;min-width:0;font-size:16px;font-weight:800;letter-spacing:-.2px;
@@ -185,7 +186,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .mistake p{font-size:13.5px;line-height:1.5;font-weight:600;margin-top:5px}
 .mistake b{font-weight:800}
 .cause-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}
-.cause-grid button{min-height:44px;padding:8px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surf);color:var(--ink2);font:700 12.5px/1.3 inherit;text-align:left;cursor:pointer}
+.cause-grid button{min-height:44px;padding:8px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surf);color:var(--ink2);font:700 12.5px/1.3 var(--ff);text-align:left;cursor:pointer}
 .cause-grid button[aria-pressed="true"]{border-color:var(--blue);background:var(--bluel);color:var(--blue)}
 .deep-explain{margin-top:14px;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surf2)}
 .deep-explain .dt{font-weight:800;margin-bottom:7px;color:var(--ink)}
@@ -238,7 +239,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .thero .track{margin-top:13px}
 .chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:8px}
 .chip{height:44px;border-radius:12px;background:var(--surf);border:2px solid var(--line);border-bottom-width:4px;
-  color:var(--ink3);font:800 13px/1 inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--ink3);font:800 13px/1 var(--ff);cursor:pointer;display:flex;align-items:center;justify-content:center;
   font-variant-numeric:tabular-nums;transition:transform .07s}
 .chip:active{transform:translateY(2px);border-bottom-width:2px}
 .chip.ok{background:var(--okbg);border-color:var(--okline);color:var(--ok)}
@@ -261,10 +262,10 @@ table.qt tr:last-child td{border-bottom:none}
 .ansbox .v{flex:1;min-width:0;font:800 32px/1 ui-monospace,"SF Mono",Menlo,monospace;font-variant-numeric:tabular-nums;
   letter-spacing:-1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ansbox .ph{flex:1;font-size:17px;font-weight:700;color:var(--ink3)}
-.ansbox .u{flex:0 0 auto;font:800 14px/1 inherit;color:var(--ink2);background:var(--surf2);border-radius:8px;padding:8px 11px}
+.ansbox .u{flex:0 0 auto;font:800 14px/1 var(--ff);color:var(--ink2);background:var(--surf2);border-radius:8px;padding:8px 11px}
 .kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
 .key{height:52px;border-radius:12px;background:var(--surf);border:2px solid var(--line);border-bottom-width:4px;
-  color:var(--ink);font:800 22px/1 inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--ink);font:800 22px/1 var(--ff);cursor:pointer;display:flex;align-items:center;justify-content:center;
   transition:transform .07s}
 .key:active{transform:translateY(2px);border-bottom-width:2px}
 .key.del{font-size:19px;color:var(--ink2)}
@@ -293,7 +294,7 @@ table.qt tr:last-child td{border-bottom:none}
 .sol ol li,.sol ul li{margin-bottom:7px}
 .tip{margin-top:12px;background:var(--warnbg);border:2px solid var(--warnline);border-radius:12px;
   padding:11px 12px;font-size:13.5px;line-height:1.5;color:var(--warn);font-weight:600}
-.hintbtn{background:none;border:none;font:800 14px/1 inherit;color:var(--blue);padding:18px 0 0;cursor:pointer}
+.hintbtn{background:none;border:none;font:800 14px/1 var(--ff);color:var(--blue);padding:18px 0 0;cursor:pointer}
 .linkrow{display:flex;gap:8px;margin-top:16px}
 .linkrow>.btn{flex:1;min-width:0}
 .hintbox{margin-top:16px;background:var(--surf2);border:2px solid var(--line);border-left:6px solid var(--blue);
@@ -323,6 +324,112 @@ table.qt tr:last-child td{border-bottom:none}
 .wi .wig{flex:0 0 auto;font-size:10.5px;font-weight:800;color:var(--ink3);background:var(--surf2);
   border-radius:6px;padding:3px 6px}
 .wi .wt{flex:1;min-width:0;font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---------- v4: home by goal ---------- */
+.today{margin-top:4px}
+.today .tt{font-size:19px;font-weight:800;letter-spacing:-.3px;color:var(--ink);margin:4px 0 2px}
+.today .ts{font-size:13.5px;font-weight:600;color:var(--ink2);margin-bottom:12px}
+.today .track{height:10px;margin:0 0 14px}
+.today .track>i:after{display:none}
+.subacts{display:flex;gap:8px;margin-top:10px}
+.subacts .btn{min-height:44px;padding:10px 8px;font-size:13.5px}
+.seg{position:sticky;top:0;z-index:5;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:22px -16px 0;padding:8px 16px;background:var(--bg)}
+.seg button{position:relative;min-height:54px;padding:6px 2px;border:2px solid var(--line);border-radius:12px;background:var(--surf);
+  font:800 13px/1.15 var(--ff);color:var(--ink2);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.seg button small{font-size:10.5px;font-weight:700;color:var(--ink3);font-variant-numeric:tabular-nums}
+.seg button[aria-selected="true"]{border-color:var(--acc);background:var(--selbg);color:var(--ink)}
+.seg button[aria-selected="true"] small{color:var(--ink2)}
+.seg button .dot{position:absolute;top:5px;right:6px;width:8px;height:8px;border-radius:99px;background:var(--no)}
+.pil-intro{font-size:14px;line-height:1.5;color:var(--ink2);font-weight:500;margin:10px 0 4px}
+.mcard{margin-top:14px;background:var(--surf);border:2px solid var(--line);border-radius:16px;overflow:hidden}
+.mcard-h{display:flex;align-items:center;gap:9px;padding:13px 14px 9px}
+.mcard-h .mod-t{color:var(--ink)}
+.mcard-h .mod-c{margin-left:auto}
+.trow{display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;border:0;border-top:1px solid var(--line);background:none;
+  font-family:inherit;text-align:left;color:var(--ink);cursor:pointer}
+.trow:active{background:var(--surf2)}
+.trow .num{flex:0 0 auto;min-width:40px;height:22px;padding:0 6px;border-radius:7px;background:var(--acc);color:var(--on);
+  font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.trow .tb{flex:1;min-width:0}
+.trow .tn{display:block;font-size:14.5px;font-weight:700;line-height:1.3}
+.trow .tm{display:flex;align-items:center;gap:8px;margin-top:5px}
+.trow .bar{flex:1;height:5px;border-radius:9px;background:var(--line);overflow:hidden}
+.trow .bar>i{display:block;height:100%;background:var(--acc);border-radius:9px}
+.trow .tc{flex:0 0 auto;font-size:11.5px;font-weight:700;color:var(--ink3);font-variant-numeric:tabular-nums}
+.trow .tc.r{color:var(--no)}
+.trow .chev{flex:0 0 auto;color:var(--ink3);font-size:18px;font-weight:800}
+.mcard .mod-intro{padding:0 14px;margin:0 0 10px}
+.mcard .mod-act{padding:10px 14px 14px;margin:0;border-top:1px solid var(--line)}
+.mcard .mod-act .btn{font-size:12.5px}
+.homefoot{display:flex;justify-content:center;gap:4px;margin-top:22px}
+.homefoot .btn.link{width:auto;min-height:40px;padding:8px 12px;color:var(--ink3);font-size:13px}
+
+/* ---------- v4: topic screen ---------- */
+.tsum{display:flex;align-items:center;gap:12px;margin:6px 0 4px}
+.tsum .bd{flex:0 0 auto;display:inline-flex;align-items:center;height:26px;padding:0 9px;border-radius:8px;background:var(--acc);color:var(--on);font-size:12.5px;font-weight:800}
+.tsum .sub{font-size:13px;font-weight:700;color:var(--ink2)}
+.lvls{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:12px 0 4px}
+.lvl{border-radius:10px;border:2px solid var(--line);padding:6px 2px 7px;text-align:center;background:var(--surf)}
+.lvl b{display:block;font-size:11px;font-weight:800;color:var(--ink3);letter-spacing:.3px}
+.lvl span{display:block;font-size:12.5px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;margin-top:2px}
+.lvl.cur{border-color:var(--acc);background:var(--selbg)}
+.lvl.done{border-color:var(--okline);background:var(--okbg)}
+.lvl.done span,.lvl.done b{color:var(--ok)}
+.lvl-cap{font-size:12px;color:var(--ink3);font-weight:600;margin-bottom:6px}
+.minor{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.minor .btn{flex:1 1 40%;min-height:42px;padding:9px 8px;font-size:13px}
+.more{margin-top:6px;border:0;background:none;color:var(--blue);font:800 14px/1.2 var(--ff);padding:10px 0;cursor:pointer}
+
+/* ---------- v4: practice ---------- */
+.qwrap{padding:14px 0 8px}
+.qmeta{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:11.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--ink3)}
+.qmeta .qn{padding:3px 7px;border-radius:6px;background:var(--acc);color:var(--on);letter-spacing:0}
+.qmeta .qlv{letter-spacing:0;text-transform:none;font-weight:700}
+.qtext.long{font-size:18px;font-weight:700;line-height:1.45;letter-spacing:-.1px}
+.ansbox .ph{font-size:16px}
+.kp{grid-template-columns:repeat(4,1fr)}
+.key.fn{font-size:17px;color:var(--ink2);background:var(--surf2)}
+.key.z{grid-column:span 2}
+.key[disabled]{opacity:.35}
+.optk{margin-left:auto;flex:0 0 auto;font-size:11px;font-weight:800;color:var(--ink3);opacity:.7}
+@media(hover:none){.optk{display:none}}
+.opt.off{opacity:.55}
+.disc{margin-top:16px;border:2px solid var(--line);border-radius:14px;background:var(--surf);overflow:hidden}
+.disc>summary{list-style:none;display:flex;align-items:center;gap:8px;padding:12px 14px;cursor:pointer;font-size:14px;font-weight:800;color:var(--ink)}
+.disc>summary::-webkit-details-marker{display:none}
+.disc>summary:after{content:'›';margin-left:auto;color:var(--ink3);font-size:18px;transition:transform .2s}
+.disc[open]>summary:after{transform:rotate(90deg)}
+.disc>summary small{font-size:12px;font-weight:700;color:var(--ink3)}
+.disc .db{padding:0 14px 14px;font-size:14px;line-height:1.55;color:var(--ink2)}
+.disc .db ol,.disc .db ul{padding-left:20px;margin:0}
+.disc .db li{margin-bottom:6px}
+.disc .db .learn-label:first-child{margin-top:4px}
+.speak{display:flex;align-items:center;gap:10px;margin-top:14px}
+.speak .btn{width:auto;flex:1;min-height:44px;padding:10px 12px;font-size:13.5px}
+.speak .sc{flex:0 0 auto;min-width:64px;text-align:center;font:800 20px/1 var(--ff);font-variant-numeric:tabular-nums;color:var(--ink2)}
+.speak .sc.on{color:var(--blue)}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.cmp>div{border:2px solid var(--line);border-radius:12px;padding:9px 12px;background:var(--surf)}
+.cmp .cl{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--ink3)}
+.cmp .cv{font:800 20px/1.25 var(--ff);font-variant-numeric:tabular-nums;margin-top:3px;overflow-wrap:anywhere}
+.cmp .you .cv{color:var(--no)} .cmp .you{border-color:var(--noline);background:var(--nobg)}
+.cmp .right .cv{color:var(--ok)} .cmp .right{border-color:var(--okline);background:var(--okbg)}
+.why{margin-top:14px;border-left:4px solid var(--warn);background:var(--warnbg);border-radius:0 12px 12px 0;padding:10px 12px;font-size:14px;line-height:1.5;color:var(--ink)}
+.why b{font-weight:800}
+.causes{margin-top:14px}
+.causes .cq{font-size:12.5px;font-weight:700;color:var(--ink3);margin-bottom:7px}
+.causes .cg{display:flex;flex-wrap:wrap;gap:6px}
+.causes button{min-height:36px;padding:6px 11px;border:2px solid var(--line);border-radius:99px;background:var(--surf);color:var(--ink2);font:700 13px/1.2 var(--ff);cursor:pointer}
+.causes button[aria-pressed="true"]{border-color:var(--blue);background:var(--selbg);color:var(--blue)}
+.fbh .tm{margin-left:auto;flex:0 0 auto;font-size:12.5px;font-weight:800;color:var(--ink3);font-variant-numeric:tabular-nums}
+.fin .btnrow .btn.sec{flex:0 0 38%}
+
+/* ---------- v4: summary ---------- */
+.sumhead{display:flex;align-items:center;gap:16px;text-align:left;margin:10px 0 16px}
+.sumhead .ringwrap{margin:0}
+.sumhead .ringtxt b{font-size:26px;letter-spacing:-.8px}
+.sumhead .sl{font-size:20px;font-weight:800;letter-spacing:-.3px;color:var(--ink)}
+.sumhead .ss{font-size:13.5px;font-weight:600;color:var(--ink2);margin-top:4px;line-height:1.45}
 
 @media (max-width:380px){
   .wrap,.fin{padding-left:14px;padding-right:14px}
@@ -355,13 +462,15 @@ var KNOWLEDGE=window.KNOWLEDGE||{};
 
 /* ---------- state ---------- */
 var LS='cooprep.v1';
-var ST={q:{},theory:{},days:[],today:null,theme:'light',best:{},exam:{}};
+var SYS_DARK=!!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);
+var ST={q:{},theory:{},days:[],today:null,theme:SYS_DARK?'dark':'light',best:{},exam:{},ui:{}};
 (function(){try{var r=localStorage.getItem(LS);if(r){var o=JSON.parse(r);
-  ST.q=o.q||{};ST.theory=o.theory||{};ST.days=o.days||[];ST.today=o.today||null;ST.theme=o.theme||'light';
-  ST.best=o.best||{};ST.exam=o.exam||{};}}catch(e){}})();
+  ST.q=o.q||{};ST.theory=o.theory||{};ST.days=o.days||[];ST.today=o.today||null;ST.theme=o.theme||ST.theme;
+  ST.best=o.best||{};ST.exam=o.exam||{};ST.ui=o.ui||{};}}catch(e){}})();
 function save(){try{localStorage.setItem(LS,JSON.stringify(ST));}catch(e){}}
 var THEME=ST.theme;
 document.documentElement.setAttribute('data-theme',THEME);
+(function(){var mt=document.querySelector('meta[name=theme-color]');if(mt)mt.setAttribute('content',THEME==='light'?'#FFFFFF':'#131F24');})();
 
 /* ---------- index ---------- */
 var TYPES=[],TBY={};
@@ -713,7 +822,7 @@ function checkNum(q,raw){
 }
 
 /* ---------- nav ---------- */
-var screen='home',typeId=null,S=null,pendingSkill=null,accTheory=false,accProto=false,lastNav=null,DAILY=12;
+var screen='home',typeId=null,S=null,pendingSkill=null,accTheory=false,accProto=false,lastNav=null,DAILY=12,CHUNK=12,homeScroll=0,SPEAK_SEC=90;
 /* Интервальное повторение. Отвечено верно без подсказки — интервал растёт;
    ошибка, пропуск или ответ с подсказкой — интервал сбрасывается на сутки. */
 var INT=[1,2,4,7];
@@ -723,6 +832,7 @@ function isDue(q){var s=ST.q[q.id];if(!s)return false;
   return s.due!==undefined&&s.due<=dayNum();}       /* верный ответ возвращается по расписанию */
 function dueList(){return ALLQ.filter(isDue).sort(function(a,b){
   return (ST.q[a.id].due||0)-(ST.q[b.id].due||0);});}
+function buzz(ok){try{if(navigator.vibrate)navigator.vibrate(ok?12:[25,50,25]);}catch(e){}}
 function modBy(id){for(var i=0;i<BANK.modules.length;i++)if(BANK.modules[i].id===id)return BANK.modules[i];return null;}
 /* конец серии: блиц и контрольная сохраняют результат */
 function endSession(){
@@ -739,17 +849,17 @@ function render(){
   var nav=screen+'|'+(S?S.idx:'')+'|'+(typeId||'');
   var th='',bh='',fh='';
   if(screen==='home'){bh=viewHome();}
-  else if(screen==='type'){th=headType();bh=viewType();}
+  else if(screen==='type'){th=headType();bh=viewType();fh=footType();}
   else if(screen==='strategyIntro'){th=headStrategy();bh=viewStrategyIntro();}
   else if(screen==='skillIntro'){th=headSkill();bh=viewSkillIntro();}
   else if(screen==='practice'){th=headPrac();bh=viewPrac();fh=footPrac();}
   else if(screen==='summary'){th=headSum();bh=viewSum();}
+  if(lastNav&&lastNav.indexOf('home|')===0&&nav!==lastNav)homeScroll=body.scrollTop;
   top.className=th?'on':'';top.innerHTML=th;
   body.innerHTML=bh;
   foot.className=fh?'on':'';foot.innerHTML=fh;
   if(nav!==lastNav){
-    body.scrollTop=0;
-    var w=body.querySelector('.wrap,.sum,.qwrap');
+    body.scrollTop=screen==='home'?homeScroll:0;
     var host=body.firstElementChild;
     if(host)host.classList.add('anim');
     lastNav=nav;
@@ -757,62 +867,72 @@ function render(){
 }
 
 /* ---------- home ---------- */
+/* Четыре цели подготовки вместо одной длинной ленты: цифры, логика, кейсы, вопросы.
+   Модуль, которого нет в списке, попадает в «Кейсы», чтобы ничего не потерялось. */
+var PILLARS=[
+  {id:'num',title:'Цифры',mods:['s','m','b','p'],intro:'Устный счёт, проценты, вероятность и бизнес-арифметика. Цель: считать вслух быстро и без ошибок, когда CEO даёт цифры на ходу.'},
+  {id:'logic',title:'Логика',mods:['l','c'],intro:'Последовательности, ограничения, правдолюбы и лжецы, стратегические загадки. Цель: спокойно разложить незнакомую задачу по шагам.'},
+  {id:'cases',title:'Кейсы',mods:['h','j','pm'],strategy:true,intro:'HFT-бизнес фонда, мини-кейсы и управление проектом. Цель: отвечать структурой и цифрами, а не общими словами.'},
+  {id:'talk',title:'Вопросы',mods:['t','k','f'],intro:'Урок «научи за 5 минут», инструменты PM, истории и английский. Цель: говорить уверенно и коротко.'}
+];
+(function(){var seen={};PILLARS.forEach(function(p){p.mods.forEach(function(id){seen[id]=1;});});
+  BANK.modules.forEach(function(m){if(!seen[m.id])PILLARS[2].mods.push(m.id);});})();
+/* точность — доля верных среди задач, которые уже пробовал: это и есть уверенность в разделе */
+function pillarStat(p){var ok=0,tot=0,bad=0;
+  p.mods.forEach(function(id){var m=modBy(id);if(!m)return;m.types.forEach(function(t){var s=tStat(t);ok+=s.ok;tot+=s.total;bad+=s.bad;});});
+  return{ok:ok,tot:tot,bad:bad,acc:(ok+bad)?Math.round(ok/(ok+bad)*100):null};}
+function topicRow(t){
+  var s=tStat(t),pct=s.total?Math.round(s.ok/s.total*100):0,nl=nextLevel(t);
+  var tc=s.bad?('<span class="tc r">'+s.bad+' на повтор</span>'):('<span class="tc">'+(nl?'ур. '+nl+' · ':'✓ · ')+s.ok+'/'+s.total+'</span>');
+  return '<button class="trow" onclick="A.open(\''+t.id+'\')"><span class="num">'+esc(t.num)+'</span><span class="tb"><span class="tn">'+esc(t.title)+'</span>'
+   +'<span class="tm"><span class="bar"><i style="width:'+pct+'%"></i></span>'+tc+'</span></span><span class="chev">›</span></button>';
+}
+function modCard(m){
+  var tot=0,ok=0;m.types.forEach(function(t){var s=tStat(t);tot+=s.total;ok+=s.ok;});
+  var h='<div class="mcard" style="'+accentStyle(m)+'"><div class="mcard-h"><span class="mod-dot"></span><span class="mod-t">'+esc(m.title)+'</span><span class="mod-c">'+ok+'/'+tot+'</span></div>';
+  if(m.intro)h+='<p class="mod-intro">'+esc(m.intro)+'</p>';
+  m.types.forEach(function(t){h+=topicRow(t);});
+  if(m.blitz||m.exam||m.rehearse){
+    h+='<div class="btnrow mod-act">';
+    if(m.rehearse)h+='<button class="btn sec" onclick="A.rehearse(\''+m.id+'\')">Репетиция '+Math.round(m.rehearse.sec/60)+':00</button>';
+    if(m.blitz)h+='<button class="btn sec" onclick="A.blitz(\''+m.id+'\')">Блиц '+Math.round(m.blitz.sec/60)+' мин'+(ST.best[m.id]?' · лучший '+ST.best[m.id].ok:'')+'</button>';
+    if(m.exam){var ex=ST.exam[m.id];h+='<button class="btn sec" onclick="A.exam(\''+m.id+'\')">Контрольная'+(ex?' · '+ex.pct+'%'+(ex.pct>=m.exam.pass?' ✓':''):'')+'</button>';}
+    h+='</div>';
+  }
+  return h+'</div>';
+}
 function viewHome(){
-  var g=gStat(),bads=badList(),st=streak(),tn=todayN();
+  var tn=todayN(),dueN=dueList().length;
   var pct=Math.min(100,tn/DAILY*100);
+  var tab=ST.ui.tab||'num',P=PILLARS.filter(function(p){return p.id===tab;})[0]||PILLARS[0];
   var h='<div class="wrap">';
   h+='<div class="brandrow"><div><div class="brand">COO Prep</div>'
-   +'<div class="brand-s">Spectral · Project Manager, Back Office · финал с CEO</div></div>';
-  if(st>0)h+='<div class="streak"><b>'+st+'</b><span>'+(st===1?'день':'дней')+'</span></div>';
-  h+='</div>';
-  h+='<div class="card lip"><div class="hero-top"><span class="lbl">Дневная тренировка</span>'
-   +'<span class="hero-n">'+DAILY+' задач · без таймера</span></div>'
+   +'<div class="brand-s">'+esc(BANK.meta.subtitle||'Spectral · Project Manager, Back Office · финал с CEO')+'</div></div></div>';
+  h+='<div class="card lip today"><span class="lbl">Сегодня</span>'
+   +'<div class="tt">'+(tn>=DAILY?'Норма дня выполнена':'Тренировка дня')+'</div>'
+   +'<div class="ts">'+(tn>=DAILY?('Решено '+tn+'. Можно ещё один круг или конкретная тема ниже.')
+     :(tn?('Решено '+tn+' из '+DAILY+'. Осталось '+(DAILY-tn)+'.'):DAILY+' задач из всех разделов, сначала то, что давалось хуже'))+'</div>'
    +'<div class="track"><i style="width:'+pct+'%"></i></div>'
-   +'<div class="hero-txt">'+(tn>=DAILY?('Закрыто: '+tn+' за сегодня. Бери любой модуль ниже.')
-     :(tn?('Сегодня '+tn+' из '+DAILY+' · осталось '+(DAILY-tn)):'Микс из всех типов, слабые места первыми'))+'</div></div>';
-  h+='<div style="margin-top:12px"><button class="btn" onclick="A.drill()">'
-   +(tn>=DAILY?'Ещё тренировка':'Начать тренировку')+'</button></div>';
-  h+='<div style="margin-top:8px"><button class="btn sec" onclick="A.drill(true)">Раунд на время · 20 мин</button></div>';
-  h+='<div class="card lip" style="margin-top:12px"><div class="hero-top">'
-   +'<span class="lbl">Стратегические кейсы</span><span class="hero-n">'+strategyList().length+' · с разбором</span></div>'
-   +'<div class="hero-txt">Ситуация, что проверяют, каркас и пример сильного ответа — до практики</div>'
-   +'<button class="btn" style="margin-top:10px" onclick="A.strategyIntro()">Разобрать и практиковать</button></div>';
-  var dueN=dueList().length;
-  if(dueN)h+='<div style="margin-top:10px"><button class="btn sec" onclick="A.review()">'
-   +'Повторить по расписанию · '+dueN+'</button></div>';
-  h+='<div class="stats"><div><b>'+g.ok+'</b><span>решено</span></div>'
-   +'<div><b class="'+(dueN?'r':'')+'">'+dueN+'</b><span>к повтору</span></div>'
-   +'<div><b>'+g.m+'</b><span>с 1-й попытки</span></div></div>';
-  BANK.modules.forEach(function(m){
-    var tot=0,mst=0;m.types.forEach(function(t){var s=tStat(t);tot+=s.total;mst+=s.ok;});
-    h+='<div class="mod" style="'+accentStyle(m)+'">';
-    h+='<div class="mod-h"><span class="mod-dot"></span><span class="mod-t">'+esc(m.title)+'</span>'
-     +'<span class="mod-c">'+mst+'/'+tot+'</span></div><div class="tiles">';
-    m.types.forEach(function(t){
-      var s=tStat(t);
-      h+='<button class="tile" onclick="A.open(\''+t.id+'\')"><span class="num">'+esc(t.num)+'</span>';
-      if(s.bad>0)h+='<span class="st">'+s.bad+'</span>';
-      else if(s.ok===s.total&&s.total)h+='<span class="st ok">✓</span>';
-      h+='<span class="nm">'+esc(t.title)+'</span><span class="cnt">'+s.ok+' из '+s.total+'</span></button>';
-    });
-    h+='</div>';
-    if(m.intro)h+='<p class="mod-intro">'+esc(m.intro)+'</p>';
-    if(m.blitz||m.exam||m.rehearse){
-      h+='<div class="btnrow mod-act">';
-      if(m.rehearse)h+='<button class="btn sec" onclick="A.rehearse(\''+m.id+'\')">Репетиция '+Math.round(m.rehearse.sec/60)+':00</button>';
-      if(m.blitz)h+='<button class="btn sec" onclick="A.blitz(\''+m.id+'\')">Блиц '+Math.round(m.blitz.sec/60)+' мин'+(ST.best[m.id]?' · рекорд '+ST.best[m.id].ok:'')+'</button>';
-      if(m.exam){var ex=ST.exam[m.id];h+='<button class="btn sec" onclick="A.exam(\''+m.id+'\')">Контрольная'+(ex?' · '+ex.pct+'%'+(ex.pct>=m.exam.pass?' ✓':''):'')+'</button>';}
-      h+='</div>';
-    }
-    h+='</div>';
-  });
+   +'<button class="btn" onclick="A.drill()">'+(tn>=DAILY?'Ещё круг':tn?'Продолжить':'Начать')+'</button>'
+   +'<div class="subacts">'
+   +(dueN?'<button class="btn sec" onclick="A.review()">Повтор · '+dueN+'</button>':'')
+   +'<button class="btn sec" onclick="A.drill(true)">На время · 20 мин</button></div></div>';
+  h+='<div class="seg" role="tablist" aria-label="Разделы подготовки">'+PILLARS.map(function(p){
+    var st=pillarStat(p),sel=p.id===P.id;
+    return '<button role="tab" aria-selected="'+sel+'" onclick="A.tab(\''+p.id+'\')">'+(st.bad?'<span class="dot" aria-label="есть ошибки"></span>':'')
+     +esc(p.title)+'<small>'+(st.acc===null?'не начато':'точность '+st.acc+'%')+'</small></button>';
+  }).join('')+'</div>';
+  h+='<p class="pil-intro">'+esc(P.intro)+'</p>';
+  if(P.strategy)h+='<div class="mcard" style="'+accentStyle(modBy('j')||BANK.modules[0])+'"><div class="mcard-h"><span class="mod-dot"></span><span class="mod-t">Стратегические кейсы</span><span class="mod-c">'+strategyList().length+'</span></div>'
+   +'<p class="mod-intro">Сначала разбор сцены и каркаса, потом твой ответ и сравнение с эталоном. Идут подходами по '+CHUNK+' задач.</p>'
+   +'<div class="mod-act"><button class="btn" onclick="A.strategyIntro()">Разобрать и практиковать</button></div></div>';
+  P.mods.forEach(function(id){var m=modBy(id);if(m)h+=modCard(m);});
   h+='<div class="acc'+(accProto?' open':'')+'"><button class="ah" aria-expanded="'+(accProto?'true':'false')+'" aria-controls="protocol-body" onclick="A.proto()">'
    +'<span>Протокол ответа на незнакомую задачу</span><span class="chev">›</span></button><div class="ab" id="protocol-body">'
    +'<ol class="steps">'+BANK.protocol.steps.map(function(s){return '<li>'+esc(s)+'</li>';}).join('')+'</ol>'
    +(BANK.protocol.note?'<p class="sp" style="margin-top:10px">'+esc(BANK.protocol.note)+'</p>':'')+'</div></div>';
-  h+='<div class="footrow"><button class="btn sec" onclick="A.theme()">'
-   +(THEME==='light'?'Тёмная тема':'Светлая тема')+'</button>'
-   +'<button class="btn sec" onclick="A.reset()">Сбросить</button></div>';
+  h+='<div class="homefoot"><button class="btn link" onclick="A.theme()">'+(THEME==='light'?'Тёмная тема':'Светлая тема')+'</button>'
+   +'<button class="btn link" onclick="A.reset()">Сбросить прогресс</button></div>';
   h+='<div class="foot">v'+esc(BANK.meta.version)+' · '+TYPES.length+' тем · '+TOTALQ+' задач</div>';
   return h+'</div>';
 }
@@ -839,7 +959,7 @@ function viewStrategyIntro(){
     h+='<div class="learn-cue">'+esc(b.situation)+'</div>';
   });
   h+='<div class="strategy-note"><b>Честная оговорка:</b> '+esc(BANK.strategy.note)+'</div>';
-  h+='<button class="btn" style="margin-top:16px" onclick="A.strategy()">Начать разбор и практику · '+strategyList().length+' задач</button>';
+  h+='<button class="btn" style="margin-top:16px" onclick="A.strategy()">Начать · подход из '+CHUNK+' задач</button>';
   h+='<div style="margin-top:10px"><button class="btn sec" onclick="A.home()">Вернуться к тренировке</button></div>';
   h+='</section></div>';
   return h;
@@ -857,7 +977,7 @@ function learnCard(t){
   var k=KNOWLEDGE[t.id];
   if(!k)return '';
   var h='<section class="learn" aria-label="Объяснение темы">';
-  h+='<div class="learn-kicker">С нуля, на пальцах</div><h3>'+esc(t.title)+'</h3>';
+  h+='<div class="learn-kicker">С нуля, на пальцах</div>';
   h+='<p class="learn-plain">'+esc(k.plain)+'</p>';
   if(k.cue)h+='<div class="learn-label">Как понять, что это такая задача</div><div class="learn-cue">'+esc(k.cue)+'</div>';
   if(k.steps&&k.steps.length)h+='<div class="learn-label">Что делать по шагам</div><ol class="learn-list">'
@@ -877,23 +997,32 @@ function learnCard(t){
   h+='</section>';
   return h;
 }
+function started(t){for(var i=0;i<t.qs.length;i++)if(ST.q[t.qs[i].id])return true;return false;}
+/* очередной подход по уровню: сначала нерешённые, не больше CHUNK */
+function levelChunk(t,level){
+  var all=t.qs.map(function(q,i){return{tid:t.id,qi:i};}).filter(function(x){return(t.qs[x.qi].level||1)===level;});
+  var open=all.filter(function(x){return !isLevelClean(t.qs[x.qi]);});
+  return (open.length?open:all).slice(0,CHUNK);
+}
 function viewType(){
   var t=TBY[typeId],s=tStat(t),m=t._m;
-  var pct=s.total?Math.round(s.m/s.total*100):0;
   var h='<div class="wrap" style="'+accentStyle(m)+'">';
-  h+='<div class="thero"><span class="bd">'+esc(t.num)+'</span>'
-   +'<h2>'+esc(t.title)+'</h2>'
-   +'<div class="sub">Решено '+s.ok+' из '+s.total+' · с первой попытки '+s.m+(s.bad?' · на повтор '+s.bad:'')+'</div>'
-   +'<div class="track"><i style="width:'+pct+'%"></i></div></div>';
-  h+=learnCard(t);
-  var ls=levelStat(t);h+='<div class="level-strip" aria-label="Прогресс по уровням">'+ls.map(function(x,i){return '<div class="level-pill"><b>'+ (i+1) +'</b><span>'+x.done+'/'+x.all+'</span><i>пройдено</i></div>';}).join('')+'</div>';
-  h+='<div class="route-note"><b>Маршрут обучения:</b> сначала простые задачи, затем обратные, многошаговые и с ловушками. Так ты тренируешь не память на один шаблон, а узнавание приёма в новой формулировке.</div>';
-  var nl=nextLevel(t)||5,nls=ls[nl-1],complete=nls.done===nls.all;
-  h+='<button class="btn" onclick="A.startLevel(\''+t.id+'\','+nl+')">'+(complete?'Повторить':'Продолжить')+' уровень '+nl+' · '+(complete?nls.all:(nls.all-nls.done))+' задач</button>';
-  h+='<div style="margin-top:10px"><button class="btn sec" onclick="A.start(\''+t.id+'\')">Весь маршрут · '+t.qs.length+'</button></div>';
-  h+='<div style="margin-top:10px">'+(s.bad>0
-     ?'<button class="btn sec" onclick="A.startBad(\''+t.id+'\')">Только ошибки · '+s.bad+'</button>'
-     :'<button class="btn sec" onclick="A.startShuffle(\''+t.id+'\')">Вперемешку</button>')+'</div>';
+  h+='<div class="tsum"><span class="bd">'+esc(t.num)+'</span><span class="sub">Решено '+s.ok+' из '+s.total+' · с первой попытки '+s.m+(s.bad?' · <span style="color:var(--no)">на повтор '+s.bad+'</span>':'')+'</span></div>';
+  var ls=levelStat(t),nl=nextLevel(t)||5;
+  h+='<div class="lvls" aria-label="Прогресс по уровням">'+ls.map(function(x,i){
+    var c=(x.all&&x.done===x.all)?' done':(i+1===nl?' cur':'');
+    return '<div class="lvl'+c+'"><b>УР. '+(i+1)+'</b><span>'+x.done+'/'+x.all+'</span></div>';}).join('')+'</div>';
+  h+='<div class="lvl-cap">'+esc(LEVEL_NAMES[nl])+'</div>';
+  var lc=learnCard(t);
+  if(lc){
+    if(started(t))h+='<details class="disc"><summary>Объяснение темы <small>шаги, пример, хаки</small></summary><div class="db">'+lc+'</div></details>';
+    else h+=lc;
+  }
+  h+='<div class="minor">';
+  h+='<button class="btn sec" onclick="A.start(\''+t.id+'\')">Весь маршрут</button>';
+  h+=(s.bad>0?'<button class="btn sec" onclick="A.startBad(\''+t.id+'\')">Только ошибки · '+s.bad+'</button>'
+     :'<button class="btn sec" onclick="A.startShuffle(\''+t.id+'\')">Вперемешку</button>');
+  h+='</div>';
   h+='<div class="acc'+(accTheory?' open':'')+'"><button class="ah" aria-expanded="'+(accTheory?'true':'false')+'" aria-controls="type-reference" onclick="A.theory()">'
    +'<span>Шпаргалка и формулы</span><span class="chev">›</span></button><div class="ab" id="type-reference">';
   h+='<div class="sh">Что проверяют</div><p class="sp">'+esc(t.why)+'</p>';
@@ -906,13 +1035,19 @@ function viewType(){
   if(t.traps&&t.traps.length)h+='<div class="sh">Частые ошибки</div><ul class="warns">'
    +t.traps.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
   h+='<div class="sh">Норматив</div><p class="sp">'+esc(t.perf||'')+'</p></div></div>';
-  h+='<div class="sh">Задачи</div><div class="chips">';
+  h+='<details class="disc"'+(started(t)?'':' open')+'><summary>Все задачи <small>'+t.qs.length+' · зелёные решены, красные на повтор</small></summary><div class="db"><div class="chips">';
   t.qs.forEach(function(q,i){
     var c=isMas(q)?'mas':isBad(q)?'bad':isOk(q)?'ok':'';
     h+='<button class="chip '+c+'" onclick="A.jump(\''+t.id+'\','+i+')">'+(i+1)+'</button>';
   });
-  h+='</div>';
+  h+='</div></div></details><div style="height:12px"></div>';
   return h+'</div>';
+}
+function footType(){
+  var t=TBY[typeId];if(!t)return '';
+  var nl=nextLevel(t),lv=nl||5,n=levelChunk(t,lv).length;
+  var label=(nl?(started(t)?'Продолжить':'Начать')+' · уровень '+lv:'Повторить уровень 5')+' · '+n+' задач';
+  return '<div class="fin" style="'+accentStyle(t._m)+'"><button class="btn" onclick="A.startLevel(\''+t.id+'\','+lv+')">'+label+'</button></div>';
 }
 
 /* ---------- focused skill introduction ---------- */
@@ -937,24 +1072,27 @@ function viewSkillIntro(){
 /* ---------- practice ---------- */
 function headPrac(){
   var c=cur();if(!c)return '';
-  var prog=Math.round((S.idx+1)/S.list.length*100);
+  var prog=Math.round(S.idx/S.list.length*100);
+  var tm=S.deadline?fmtMs(Math.max(0,S.deadline-Date.now())):fmtMs(Date.now()-S.taskStart);
   return '<div class="prow" style="'+accentStyle(c.t._m)+'">'
    +'<button class="xbtn" aria-label="Выйти из тренировки" title="Выйти" onclick="A.leave()">✕</button>'
    +'<div class="track"><i style="width:'+prog+'%"></i></div>'
    +'<span class="pcount">'+(S.idx+1)+'/'+S.list.length+'</span>'
-   +'<span class="ptime" id="timer">'+(S.deadline?fmtMs(Math.max(0,S.deadline-Date.now())):'без лимита')+'</span>'
+   +'<span class="ptime" id="timer" title="'+(S.deadline?'Осталось времени':'Время на задачу')+'">'+tm+'</span>'
    +'</div>';
 }
+var MODE_NAMES={blitz:'Блиц',exam:'Контрольная',rehearse:'Репетиция',review:'Повтор',drill:'Тренировка дня',strategy:'Кейс'};
 function viewPrac(){
   var c=cur();if(!c)return '';
-  var q=c.q,m=c.t._m,k=KNOWLEDGE[c.t.id],h='';
-  h+='<div class="wrap mid" style="'+accentStyle(m)+'"><div class="qwrap">';
-  h+='<div class="qlabel">'+(q.kind==='open'?'Свободный ответ':q.kind==='mc'?'Выбери вариант':'Введи ответ')+' · '+esc(LEVEL_NAMES[q.level||1])+'</div>';
-  h+='<div class="qtext">'+esc(q.t)+'</div>';
-  if(BANK.strategy.order.indexOf(q._t.id)>=0)h+=caseCard(c);
-  if(q.table)h+='<div class="tw">'+tableHtml(q.table)+'</div>';
+  var q=c.q,m=c.t._m,k=KNOWLEDGE[c.t.id],h='',isCase=BANK.strategy.order.indexOf(q._t.id)>=0;
+  h+='<div class="wrap" style="'+accentStyle(m)+'"><div class="qwrap">';
+  h+='<div class="qmeta"><span class="qn">'+esc(c.t.num)+'</span><span class="qlv">'+esc(c.t.title)+' · ур. '+(q.level||1)+'</span>'
+   +(MODE_NAMES[S.mode]?'<span style="margin-left:auto">'+MODE_NAMES[S.mode]+'</span>':'')+'</div>';
+  h+='<div class="qtext'+(q.t.length>150?' long':'')+'">'+esc(q.t)+'</div>';
+  if(isCase)h+=caseCard(c);
+  if(q.table)h+='<div class="tw" style="margin-top:16px">'+tableHtml(q.table)+'</div>';
   if(q.kind==='num'){
-    h+='<div class="ansbox">'+(S.val?'<span class="v">'+esc(S.val)+'</span>':'<span class="ph">0</span>')
+    h+='<div class="ansbox">'+(S.val?'<span class="v">'+esc(S.val.replace(/^-/,'−'))+'</span>':'<span class="ph">Набери ответ</span>')
      +(q.unit?'<span class="u">'+esc(q.unit)+'</span>':'')+'</div>';
   } else if(q.kind==='mc'){
     h+='<div style="margin-top:18px">';
@@ -963,14 +1101,14 @@ function viewPrac(){
       if(S.answered){cl+=(i===q.correct?' good':(i===S.pick?' bad':' off'));}
       else if(S.pick===i)cl+=' sel';
       h+='<button class="'+cl+'" onclick="A.pick('+i+')"><span class="l">'
-       +String.fromCharCode(65+i)+'</span><span>'+esc(o)+'</span></button>';
+       +String.fromCharCode(65+i)+'</span><span>'+esc(o)+'</span>'+(S.answered?'':'<span class="optk">'+(i+1)+'</span>')+'</button>';
     });
     h+='</div>';
   } else {
     if(!S.revealed){
-      h+='<textarea class="ta" id="ans" placeholder="Структура, расчёт, рекомендация…" autocorrect="off" spellcheck="false">'+esc(S.val||'')+'</textarea>';
-      h+='<div style="margin-top:12px"><button class="btn" style="--acc:var(--blue);--accl:var(--bluel);--on:#FFFFFF" '
-       +'onclick="A.reveal()">Сравнить с эталоном</button></div>';
+      h+='<div class="speak"><button class="btn sec" onclick="A.speak()">'+(S.speakAt?'Стоп':'Ответить вслух · '+fmtMs(SPEAK_SEC*1000))+'</button>'
+       +'<span class="sc'+(S.speakAt?' on':'')+'" id="spk">'+(S.speakAt?fmtMs(Math.max(0,S.speakAt+SPEAK_SEC*1000-Date.now())):(S.spoke?'✓':''))+'</span></div>';
+      h+='<textarea class="ta" id="ans" placeholder="Тезисы ответа: структура, цифры, рекомендация. Можно не писать, а сказать вслух." autocorrect="off" spellcheck="false">'+esc(S.val||'')+'</textarea>';
     } else {
       h+=refCard(c);
     }
@@ -983,79 +1121,81 @@ function viewPrac(){
     if(q.kind!=='open')h+='<button class="btn link" onclick="A.dontKnow()">Не знаю</button>';
     h+='</div>';
   }
-  if(S.answered)h+=solCard(c);
+  if(S.answered&&q.kind!=='open')h+=solCard(c);
+  if(S.answered&&q.kind==='open'&&!S.ok)h+=reviewBits(c);
   h+='</div></div>';
   return h;
 }
+function lis(a){return a.map(function(x){return '<li>'+esc(x)+'</li>';}).join('');}
 function refCard(c){
-  var q=c.q,h='<div class="sol"><div class="hd"><span>Эталон</span><span class="ln"></span></div>';
-  if(S.val)h+='<p class="sp" style="margin-bottom:10px"><b>Твой ответ:</b> '+esc(S.val)+'</p>';
-  if(q.model&&q.model.length)h+='<ol>'+q.model.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>';
-  if(q.checklist&&q.checklist.length)h+='<div class="hd" style="margin-top:14px"><span>Проверь у себя</span><span class="ln"></span></div><ul>'
-   +q.checklist.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
-  if(!S.ok)h+=mistakeCard(c);
+  var q=c.q,b=BANK.strategy.types[q._t.id],h='<div class="sol"><div class="hd"><span>Сравни с эталоном</span><span class="ln"></span></div>';
+  if(S.val)h+='<div class="learn-example" style="margin-bottom:12px"><div class="lbl" style="margin-bottom:5px">Твой ответ</div><div class="sp" style="white-space:pre-wrap">'+esc(S.val)+'</div></div>';
+  if(q.model&&q.model.length)h+='<ol>'+lis(q.model)+'</ol>';
+  if(q.checklist&&q.checklist.length)h+='<div class="hd" style="margin-top:14px"><span>Проверь у себя</span><span class="ln"></span></div><ul class="learn-check">'+lis(q.checklist)+'</ul>';
+  if(b&&b.sample)h+='<details class="disc"><summary>Пример сильного ответа</summary><div class="db"><ol>'+lis(b.sample)+'</ol></div></details>';
   return h+'</div>';
 }
+/* кейс: суть задачи видна сразу, каркас — по запросу, пример ответа — только после своей попытки */
 function caseCard(c){
   var q=c.q,b=BANK.strategy.types[q._t.id],d=q.decode||BANK.strategy.decode[q.id];
-  var h='<section class="strategy-card" aria-label="Разбор кейса">';
-  if(d)h+='<div class="learn-label">Конкретно в этой задаче</div><div class="learn-plain">'+esc(d)+'</div>';
-  h+='<div class="learn-label">Сцена</div><p class="sp">'+esc(b.situation)+'</p>';
-  h+='<div class="learn-label">Что спрашивает COO</div><p class="sp">'+esc(b.ask)+'</p>';
-  h+='<div class="learn-label">Что проверяют</div><ul>'+b.checks.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
-  h+='<div class="learn-label">Каркас ответа</div><ol>'+b.frame.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>';
-  h+='<div class="learn-label">Пример сильного ответа</div><ol>'+b.sample.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>';
-  h+='<div class="strategy-note">'+esc(BANK.strategy.note)+'</div></section>';
+  var h='';
+  if(d)h+='<div class="learn-cue" style="margin-top:14px">'+esc(d)+'</div>';
+  if(b&&!S.revealed){
+    h+='<details class="disc"'+(ST.q[q.id]?'':'')+'><summary>Каркас ответа <small>сцена, что проверяют, шаги</small></summary><div class="db">'
+     +'<div class="learn-label">Сцена</div><p>'+esc(b.situation)+'</p>'
+     +'<div class="learn-label">Что спрашивает COO</div><p>'+esc(b.ask)+'</p>'
+     +'<div class="learn-label">Что проверяют</div><ul>'+lis(b.checks)+'</ul>'
+     +'<div class="learn-label">Каркас</div><ol>'+lis(b.frame)+'</ol></div></details>';
+  }
   return h;
 }
-function mistakeCard(c){
-  var q=c.q,h='<div class="mistake"><div class="mt">Почему ответ не засчитан</div>';
-  if(S.skipped){
-    h+='<p><b>Ты пропустил задачу.</b> Это не ошибка характера: сейчас важнее увидеть решение, назвать приём вслух и вернуть задачу на повтор.</p>';
-  }else if(q.kind==='num'){
-    h+='<p>Ты ввёл <b>'+esc(S.user||'—')+'</b>, а правильный ориентир — <b>'+fmt(q.a)+(q.unit?' '+esc(q.unit):'')+'</b>.</p>';
-  }else if(q.kind==='mc'){
-    h+='<p>Ты выбрал <b>'+esc(S.user||'—')+'</b>. Правильный вариант — <b>'+String.fromCharCode(65+q.correct)+'. '+esc(q.opts[q.correct])+'</b>.</p>';
-  }else{
-    h+='<p><b>Свободный ответ не проверяется автоматически.</b> Это не оценка «плохой ответ»: ты отметил, что пока не уверен. Сравни свой текст с эталоном и чек-листом; найди первый пункт, которого в твоём ответе не хватает. Именно его и повтори в следующей попытке.</p>';
+function reviewBits(c){
+  var q=c.q,h='';
+  if(q.trap&&!S.ok)h+='<div class="why"><b>Ловушка:</b> '+esc(q.trap)+'</div>';
+  if(q.skill&&!S.ok){
+    var sk=String(q.skill).replace(/[^a-zA-Z0-9_:-]/g,''),n=skillList(q).length;
+    if(n)h+='<button class="btn sec" style="margin-top:12px" onclick="A.skill(\''+sk+'\')">Закрепить приём «'+esc(skillLabel(q))+'» · '+n+'</button>';
   }
-  if(q.skill){
-    var sk=String(q.skill).replace(/[^a-zA-Z0-9_:-]/g,'');
-    h+='<p><b>Что сейчас тренируем:</b> '+esc(skillLabel(q))+'</p>';
-    if(skillList(q).length)h+='<button class="btn sec" style="margin-top:10px" onclick="A.skill(\''+sk+'\')">Закрепить этот приём · '+skillList(q).length+' задач</button>';
+  if(!S.ok){
+    var cause=ST.q[q.id]&&ST.q[q.id].cause||'';
+    h+='<div class="causes"><div class="cq">Что сбило? Это подстроит следующие тренировки.</div><div class="cg">'
+     +[['wording','Не понял условие'],['method','Не знал способ'],['calculation','Ошибся в счёте'],['pressure','Торопился']].map(function(x){
+       return '<button aria-pressed="'+(cause===x[0])+'" onclick="A.markCause(\''+q.id+'\',\''+x[0]+'\')">'+x[1]+'</button>';
+     }).join('')+'</div></div>';
   }
-  if(q.trap)h+='<p><b>Типичная ловушка:</b> '+esc(q.trap)+'</p>';
-  var cause=ST.q[q.id]&&ST.q[q.id].cause||'';
-  h+='<p style="margin-top:12px"><b>Что сбило?</b> Выбери причину, чтобы следующие тренировки лучше подстраивались под тебя.</p>';
-  h+='<div class="cause-grid">'
-   +[['wording','Не понял условие'],['method','Не знал способ'],['calculation','Знал способ, ошибся в счёте'],['pressure','Растерялся или торопился']].map(function(x){
-     return '<button aria-pressed="'+(cause===x[0])+'" onclick="A.markCause(\''+q.id+'\',\''+x[0]+'\')">'+x[1]+'</button>';
-   }).join('')+'</div>';
-  h+='</div>';
   return h;
 }
 function solCard(c){
-  var q=c.q,h='<div class="sol"><div class="hd"><span>Решение</span><span class="ln"></span></div>';
-  if(q.sol&&q.sol.length)h+='<ol>'+q.sol.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>';
-  if(q.explain&&q.explain.length)h+='<div class="deep-explain"><div class="dt">Разберём на пальцах</div><ol>'+q.explain.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol></div>';
-  if(q.after&&q.after.length)h+='<div class="deep-explain"><div class="dt">Теперь короткая запись</div><ol>'+q.after.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol></div>';
-  if(q.kind==='open'&&q.model&&q.model.length)h+='<ol>'+q.model.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>';
-  if(q.checklist&&q.checklist.length)h+='<div class="hd" style="margin-top:14px"><span>Проверь у себя</span><span class="ln"></span></div><ul>'
-   +q.checklist.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
-  if(!S.ok)h+=mistakeCard(c);
-  return h+'</div>';
+  var q=c.q,ok=S.ok,h='';
+  if(!ok&&q.kind==='num'){
+    var right=fmt(q.a)+(q.unit?' '+q.unit:'');
+    h+='<div class="cmp">'+(S.skipped?'':'<div class="you"><div class="cl">Твой ответ</div><div class="cv">'+esc(S.user.replace(/^-/,'−'))+'</div></div>')
+     +'<div class="right"'+(S.skipped?' style="grid-column:span 2"':'')+'><div class="cl">Верно</div><div class="cv">'+esc(right)+'</div></div></div>';
+  }
+  var steps=(q.sol&&q.sol.length)?'<ol>'+lis(q.sol)+'</ol>':'';
+  var deep=(q.explain&&q.explain.length?'<div class="deep-explain"><div class="dt">Разберём на пальцах</div><ol>'+lis(q.explain)+'</ol></div>':'')
+   +(q.after&&q.after.length?'<div class="deep-explain"><div class="dt">Теперь короткая запись</div><ol>'+lis(q.after)+'</ol></div>':'')
+   +(q.checklist&&q.checklist.length?'<div class="deep-explain"><div class="dt">Проверь у себя</div><ul>'+lis(q.checklist)+'</ul></div>':'');
+  if(ok){
+    /* верно — не тормозим: решение доступно, но свёрнуто */
+    if(steps||deep)h+='<details class="disc"><summary>Как решается</summary><div class="db">'+steps+deep+'</div></details>';
+  }else{
+    h+='<div class="sol"><div class="hd"><span>Решение</span><span class="ln"></span></div>'+steps+deep+'</div>';
+    h+=reviewBits(c);
+  }
+  return h;
 }
 function ansLine(c){
   var q=c.q;
   var right=fmt(q.a)+(q.unit?' '+esc(q.unit):'');
   if(S.skipped){
     if(q.kind==='num')return 'Верно: <b>'+right+'</b>';
-    if(q.kind==='mc')return 'Верно: <b>'+String.fromCharCode(65+q.correct)+'. '+esc(q.opts[q.correct])+'</b>';
+    if(q.kind==='mc')return 'Верно: <b>'+String.fromCharCode(65+q.correct)+'</b>';
     return 'Задача вернётся на повтор';
   }
-  if(q.kind==='num')return S.ok?('Ответ: <b>'+right+'</b>'):('Твой: <b>'+esc(S.user||'—')+'</b> · верно <b>'+right+'</b>');
-  if(q.kind==='mc')return 'Верно: <b>'+String.fromCharCode(65+q.correct)+'. '+esc(q.opts[q.correct])+'</b>';
-  return 'Самооценка: '+(S.ok?'справился':'нужно повторить');
+  if(q.kind==='num')return S.ok?('<b>'+right+'</b>'):('Верно: <b>'+right+'</b>');
+  if(q.kind==='mc')return S.ok?'':'Верно: <b>'+String.fromCharCode(65+q.correct)+'</b>';
+  return S.ok?'Засчитано':'Вернётся на повтор завтра';
 }
 function footPrac(){
   var c=cur();if(!c)return '';
@@ -1064,18 +1204,23 @@ function footPrac(){
     var ok=S.ok, skip=!!S.skipped;
     var acc=skip?'var(--warn)':(ok?'var(--ok)':'var(--no)');
     var on=skip?(THEME==='light'?'#FFFFFF':'#131F24'):(ok?'var(--ongreen)':'#FFFFFF');
+    var sec=Math.round((S.answeredAt-S.taskStart)/1000);
     return '<div class="fin" style="--acc:'+acc+';--on:'+on+'">'
      +'<div class="fbh"><div class="ic">'+(skip?'!':(ok?'✓':'✕'))+'</div>'
-     +'<div class="tx"><div class="t">'+(skip?'Пропущено':(ok?'Верно':'Неверно'))+'</div><div class="a">'+ansLine(c)+'</div></div></div>'
+     +'<div class="tx"><div class="t">'+(skip?'Разберём':(ok?'Верно':'Неверно'))+'</div><div class="a">'+ansLine(c)+'</div></div>'
+     +(q.kind!=='open'&&!skip?'<span class="tm">'+sec+' с</span>':'')+'</div>'
      +'<button class="btn" style="--acc:var(--green);--accl:var(--greenl);--on:var(--ongreen)" onclick="A.next()">'
      +(S.idx+1>=S.list.length?'Завершить':'Дальше')+'</button></div>';
   }
   if(q.kind==='num'){
-    var keys=['1','2','3','4','5','6','7','8','9',',','0','del'];
+    var rows=[['1','2','3','del'],['4','5','6','-'],['7','8','9',','],['0','k','m']];
+    var suf=/[km]$/i.test(S.val||'');
     var kp='<div class="kp" style="'+accentStyle(c.t._m)+'">';
-    keys.forEach(function(k){
-      kp+='<button class="key'+(k==='del'?' del':'')+'" onclick="A.key(\''+k+'\')">'+(k==='del'?'⌫':k)+'</button>';
-    });
+    rows.forEach(function(r){r.forEach(function(k){
+      var lab={del:'⌫','-':'±',k:'k',m:'M'}[k]||k,cls='key'+(k==='0'?' z':'')+(/^(del|-|k|m|,)$/.test(k)?' fn':'');
+      var dis=(/^[0-9,]$/.test(k)&&suf)||((k==='k'||k==='m')&&!/[0-9]/.test(S.val||''));
+      kp+='<button class="'+cls+'"'+(dis?' disabled':'')+' aria-label="'+({del:'Стереть','-':'Минус',k:'тысяч',m:'миллионов',',':'Запятая'}[k]||k)+'" onclick="A.key(\''+k+'\')">'+lab+'</button>';
+    });});
     kp+='</div>';
     return '<div class="fin">'+kp+'<button class="btn"'+((S.val?'':' disabled'))
      +' style="--acc:var(--green);--accl:var(--greenl);--on:var(--ongreen)" onclick="A.check()">Проверить</button></div>';
@@ -1085,12 +1230,12 @@ function footPrac(){
      +' style="--acc:var(--green);--accl:var(--greenl);--on:var(--ongreen)" onclick="A.check()">Проверить</button></div>';
   }
   if(S.revealed){
-    return '<div class="fin"><div class="btnrow">'
-     +'<button class="btn sec" onclick="A.selfBad()">Повторить</button>'
-     +'<button class="btn" style="--acc:var(--green);--accl:var(--greenl);--on:var(--ongreen)" onclick="A.selfGood()">Справился</button>'
+    return '<div class="fin"><div class="lbl" style="text-align:center;margin-bottom:8px">Честно: ответ покрыл пункты эталона?</div><div class="btnrow">'
+     +'<button class="btn sec" onclick="A.selfBad()">Не всё</button>'
+     +'<button class="btn" style="--acc:var(--green);--accl:var(--greenl);--on:var(--ongreen)" onclick="A.selfGood()">Да, покрыл</button>'
      +'</div></div>';
   }
-  return '';
+  return '<div class="fin"><button class="btn" style="--acc:var(--blue);--accl:var(--bluel);--on:#FFFFFF" onclick="A.reveal()">Сравнить с эталоном</button></div>';
 }
 
 /* ---------- summary ---------- */
@@ -1100,13 +1245,12 @@ function viewSum(){
   if(!S)return '';
   var done=S.done,ok=S.correct,pct=done?Math.round(ok/done*100):0;
   var col=pct>=80?'var(--ok)':pct>=50?'var(--warn)':'var(--no)';
-  var h='<div class="wrap"><div class="sum">';
-  h+='<div class="ringwrap">'+ring(pct,col,164)+'<div class="ringtxt"><b>'+pct+'%</b><span>ВЕРНЫХ</span></div></div>';
-  h+='<div class="sumline">'+ok+' из '+done+' · '+fmtMs((S.endedAt||Date.now())-S.startedAt)+'</div>';
-  h+='<div class="stats" style="margin-top:0"><div><b>'+done+'</b><span>сделано</span></div>'
-   +'<div><b class="'+(S.wrong.length?'r':'')+'">'+S.wrong.length+'</b><span>на повтор</span></div>'
-   +'<div><b>'+todayN()+'</b><span>за сегодня</span></div></div>';
-  h+='</div>';
+  var dur=(S.endedAt||Date.now())-S.startedAt,avg=done?Math.round(dur/done/1000):0;
+  var head=!done?'Подход прерван':pct>=90?'Уверенно':pct>=70?'Хорошо, есть что добрать':pct>=50?'Половина — разберём ошибки':'Сначала разбор, потом повтор';
+  var h='<div class="wrap">';
+  h+='<div class="sumhead"><div class="ringwrap">'+ring(pct,col,92)+'<div class="ringtxt"><b>'+pct+'%</b></div></div>'
+   +'<div><div class="sl">'+head+'</div><div class="ss">Верно '+ok+' из '+done+' · '+fmtMs(dur)+(done?' · в среднем '+avg+' с на задачу':'')+'<br>За сегодня решено '+todayN()+'</div></div></div>';
+  if(S.rest&&S.rest.length)h+='<button class="btn" onclick="A.more()">Следующий подход · '+Math.min(CHUNK,S.rest.length)+' задач</button><div style="height:10px"></div>';
   h+=sessionVerdict();
   if(S.wrong.length){
     h+='<div class="sh">Разобрать заново</div><div class="wlist">';
@@ -1114,13 +1258,13 @@ function viewSum(){
       var q=null;ALLQ.forEach(function(x){if(x.id===id)q=x;});
       if(!q)return;
       var qt=q.t.length>56?q.t.slice(0,56)+'…':q.t;
-      h+='<div class="wi" onclick="A.open(\''+q._t.id+'\')"><span class="wig">'+esc(q._t.num)+'</span>'
+      h+='<div class="wi" onclick="A.jump(\''+q._t.id+'\','+q._i+')"><span class="wig">'+esc(q._t.num)+'</span>'
        +'<span class="wt">'+esc(qt)+'</span></div>';
     });
     h+='</div>';
-    h+='<div style="margin-top:12px"><button class="btn" onclick="A.redoWrong()">Повторить ошибочные</button></div>';
+    h+='<div style="margin-top:12px"><button class="btn'+(S.rest&&S.rest.length?' sec':'')+'" onclick="A.redoWrong()">Повторить ошибочные · '+S.wrong.length+'</button></div>';
   }
-  h+='<div style="margin-top:10px"><button class="btn sec" onclick="A.home()">На главную</button></div>';
+  h+='<div style="margin-top:10px"><button class="btn sec" onclick="A.home()">На главную</button></div><div style="height:16px"></div>';
   return h+'</div>';
 }
 
@@ -1158,9 +1302,10 @@ window.A={
   home:function(){screen='home';S=null;render();},
   open:function(id){typeId=id;screen='type';accTheory=false;S=null;render();},
   strategyIntro:function(){S=null;typeId=null;screen='strategyIntro';render();},
-  strategy:function(){A.run(strategyList().map(function(q){return{tid:q._t.id,qi:q._i};}),'strategy');},
+  strategy:function(){var l=strategyList(),open=l.filter(function(q){return !isOk(q);});A.chunked((open.length?open:l).map(function(q){return{tid:q._t.id,qi:q._i};}),'strategy');},
   theory:function(){accTheory=!accTheory;if(accTheory&&typeId){ST.theory[typeId]=1;save();}render();},
   proto:function(){accProto=!accProto;render();},
+  tab:function(id){ST.ui.tab=id;save();var b=document.getElementById('body'),seg=b.querySelector('.seg');var y=seg?seg.offsetTop:0;render();if(b.scrollTop>y)b.scrollTop=y;},
   theme:function(){
     THEME=(THEME==='light')?'dark':'light';ST.theme=THEME;save();
     document.documentElement.setAttribute('data-theme',THEME);
@@ -1168,9 +1313,12 @@ window.A={
     if(mt)mt.setAttribute('content',THEME==='light'?'#FFFFFF':'#131F24');
     render();
   },
-  reset:function(){if(confirm('Сбросить весь прогресс?')){ST={q:{},theory:{},days:[],today:null,theme:THEME,best:{},exam:{}};save();render();}},
-  start:function(id){var t=TBY[id];A.run(routeFor(t),'type');},
-  startLevel:function(id,level){var t=TBY[id];var list=t.qs.map(function(q,i){return{tid:id,qi:i};}).filter(function(x){return(t.qs[x.qi].level||1)===level;});A.run(list,'level');},
+  reset:function(){if(confirm('Сбросить весь прогресс?')){ST={q:{},theory:{},days:[],today:null,theme:THEME,best:{},exam:{},ui:{}};save();render();}},
+  /* весь маршрут подходами: нерешённые по порядку уровней, остальное — следующим подходом */
+  start:function(id){var t=TBY[id],r=routeFor(t);var open=r.filter(function(x){return !isOk(t.qs[x.qi]);});A.chunked(open.length?open:r,'type');},
+  chunked:function(list,mode){A.run(list.slice(0,CHUNK),mode);if(S)S.rest=list.slice(CHUNK);},
+  more:function(){if(!S||!S.rest||!S.rest.length)return;var r=S.rest,mode=S.mode;A.chunked(r,mode);},
+  startLevel:function(id,level){A.run(levelChunk(TBY[id],level),'level');},
   startShuffle:function(id){var t=TBY[id];A.run(shuffle(t.qs.map(function(q,i){return{tid:id,qi:i};})),'type');},
   startBad:function(id){var t=TBY[id];
     A.run(t.qs.map(function(q,i){return{tid:id,qi:i};}).filter(function(x){return isBad(t.qs[x.qi]);}),'type');},
@@ -1273,11 +1421,20 @@ window.A={
     if(el&&el.value!==undefined)S.val=el.value;S.hint=true;render();},
   key:function(k){
     if(!S||S.answered)return;
-    var v=S.val||'';
+    var v=S.val||'',suf=/[km]$/i.test(v);
     if(k==='del')v=v.slice(0,-1);
-    else if(k===','){if(v.indexOf(',')<0&&v.indexOf('.')<0)v=v+',';}
+    else if(k==='-')v=(v.charAt(0)==='-')?v.slice(1):'-'+v;
+    else if(k==='k'||k==='m'){if(!/[0-9]/.test(v))return;v=suf?(v.slice(0,-1)+(v.slice(-1).toLowerCase()===k?'':(k==='m'?'M':'k'))):v+(k==='m'?'M':'k');}
+    else if(suf)return;
+    else if(k===','){if(v.indexOf(',')<0&&v.indexOf('.')<0)v=(/[0-9]$/.test(v)?v:v+'0')+',';}
     else if(v.length<14)v=v+k;
     S.val=v;S.badInput=false;render();
+  },
+  /* ответ вслух: CEO слушает, а не читает — тренируем уложиться в 90 секунд */
+  speak:function(){
+    if(!S)return;var el=document.getElementById('ans');if(el)S.val=el.value;
+    if(S.speakAt){S.speakAt=null;S.spoke=true;}else{S.speakAt=Date.now();}
+    render();
   },
   pick:function(i){if(!S||S.answered)return;S.pick=(S.pick===i?null:i);render();},
   check:function(){
@@ -1295,17 +1452,17 @@ window.A={
   /* «не знаю» — честный сигнал вместо угадывания: показываем решение, задача уходит в повтор */
   dontKnow:function(){
     var c=cur();if(!c||S.answered)return;
-    S.answered=true;S.ok=false;S.user='';S.skipped=true;S.badInput=false;
+    S.answered=true;S.answeredAt=Date.now();S.ok=false;S.user='';S.skipped=true;S.badInput=false;buzz(false);
     record(c.q,false,Date.now()-S.taskStart,true,false);
     S.done++;S.wrong.push(c.q.id);S.res.push({tid:c.t.id,ok:false,ms:Date.now()-S.taskStart});
     render();
   },
-  reveal:function(){var el=document.getElementById('ans');if(el&&S)S.val=el.value;if(S)S.revealed=true;render();},
+  reveal:function(){var el=document.getElementById('ans');if(el&&S)S.val=el.value;if(S){S.revealed=true;S.speakAt=null;}render();},
   selfGood:function(){A.finish(true,S.val);},
   selfBad:function(){A.finish(false,S.val);},
   finish:function(ok,user){
     var c=cur();if(!c||S.answered)return;
-    S.answered=true;S.ok=ok;S.user=user||'';S.skipped=false;S.badInput=false;
+    S.answered=true;S.answeredAt=Date.now();S.ok=ok;S.user=user||'';S.skipped=false;S.badInput=false;S.speakAt=null;buzz(ok);
     record(c.q,ok,Date.now()-S.taskStart,false,!S.hint);
     S.done++;if(ok)S.correct++;else S.wrong.push(c.q.id);
     S.res.push({tid:c.t.id,ok:!!ok,ms:Date.now()-S.taskStart});
@@ -1317,7 +1474,7 @@ window.A={
     if(!S)return;
     if(S.idx+1>=S.list.length){endSession();return;}
     S.idx++;S.answered=false;S.ok=null;S.user='';S.pick=null;S.val='';S.hint=false;S.revealed=false;
-    S.skipped=false;S.badInput=false;S.taskStart=Date.now();
+    S.skipped=false;S.badInput=false;S.taskStart=Date.now();S.speakAt=null;S.spoke=false;
     render();
   }
 };
@@ -1328,6 +1485,9 @@ document.addEventListener('keydown',function(e){
   if(!S.answered&&c.q.kind==='num'&&/^[0-9]$/.test(e.key)){e.preventDefault();A.key(e.key);return;}
   if(!S.answered&&c.q.kind==='num'&&(e.key===','||e.key==='.')){e.preventDefault();A.key(',');return;}
   if(!S.answered&&c.q.kind==='num'&&e.key==='Backspace'){e.preventDefault();A.key('del');return;}
+  if(!S.answered&&c.q.kind==='num'&&/^[-kKmMкКмМ]$/.test(e.key)){e.preventDefault();A.key(e.key==='-'?'-':/[kKкК]/.test(e.key)?'k':'m');return;}
+  if(!S.answered&&c.q.kind==='mc'){var ix='1234'.indexOf(e.key);if(ix<0)ix='abcd'.indexOf(String(e.key).toLowerCase());if(ix>=0&&ix<c.q.opts.length){e.preventDefault();A.pick(ix);return;}}
+  if(e.target&&e.target.tagName==='TEXTAREA')return;
   if(e.key!=='Enter')return;
   e.preventDefault();
   if(!S.answered)A.check(); else A.next();
@@ -1335,8 +1495,11 @@ document.addEventListener('keydown',function(e){
 
 setInterval(function(){
   if(screen!=='practice'||!S)return;
-  if(!S.deadline)return;
+  var sp=document.getElementById('spk');
+  if(sp&&S.speakAt){var sl=S.speakAt+SPEAK_SEC*1000-Date.now();sp.textContent=fmtMs(Math.max(0,sl));
+    if(sl<=0){S.speakAt=null;S.spoke=true;var ta=document.getElementById('ans');if(ta)S.val=ta.value;buzz(false);render();}}
   var el=document.getElementById('timer');if(!el)return;
+  if(!S.deadline){if(!S.answered)el.textContent=fmtMs(Date.now()-S.taskStart);return;}
   var left=S.deadline-Date.now();
   el.textContent=fmtMs(left);
   el.className='ptime'+(left<60000?' crit':left<300000?' over':'');
