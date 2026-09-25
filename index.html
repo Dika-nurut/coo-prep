@@ -474,6 +474,7 @@ button:focus-visible,summary:focus-visible,textarea:focus-visible{outline:3px so
 <script src="hft.js?v=1.0"></script>
 <script src="teach.js?v=1.1"></script>
 <script src="tools.js?v=1.3"></script>
+<script src="hard.js?v=1.0"></script>
 <script>
 (function(){
 "use strict";
@@ -520,6 +521,7 @@ var ACC={
   s:{l:'#0F9D6E',d:'#34D399',ll:'#0B7A55',dl:'#22B07F'},
   t:{l:'#DB2777',d:'#F472B6',ll:'#9D174D',dl:'#DB2777'},
   k:{l:'#0891B2',d:'#22D3EE',ll:'#0E7490',dl:'#0891B2'},
+  z:{l:'#E11D48',d:'#FB7185',ll:'#9F1239',dl:'#E11D48'},
   h:{l:'#4F46E5',d:'#818CF8',ll:'#3730A3',dl:'#6366F1'}
 };
 function hex2rgb(h){h=h.replace('#','');if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
@@ -905,7 +907,7 @@ function render(){
 /* Четыре цели подготовки вместо одной длинной ленты: цифры, логика, кейсы, вопросы.
    Модуль, которого нет в списке, попадает в «Кейсы», чтобы ничего не потерялось. */
 var PILLARS=[
-  {id:'num',title:'Цифры',mods:['s','m','b','p'],intro:'Устный счёт, проценты, вероятность и бизнес-арифметика. Цель: считать вслух быстро и без ошибок, когда CEO даёт цифры на ходу.'},
+  {id:'num',title:'Цифры',mods:['z','s','m','b','p'],intro:'Устный счёт, проценты, вероятность и бизнес-арифметика. Цель: считать вслух быстро и без ошибок, когда CEO даёт цифры на ходу.'},
   {id:'logic',title:'Логика',mods:['l','c'],intro:'Последовательности, ограничения, правдолюбы и лжецы, стратегические загадки. Цель: спокойно разложить незнакомую задачу по шагам.'},
   {id:'cases',title:'Кейсы',mods:['h','j','pm'],strategy:true,intro:'HFT-бизнес фонда, мини-кейсы и управление проектом. Цель: отвечать структурой и цифрами, а не общими словами.'},
   {id:'talk',title:'Вопросы',mods:['t','k','f'],intro:'Урок «научи за 5 минут», инструменты PM, истории и английский. Цель: говорить уверенно и коротко.'}
@@ -1128,6 +1130,7 @@ function viewPrac(){
   var big=q.t.length<=32&&/^[0-9\s×·÷+\-−²³√,.()=?%\/^]+$/.test(q.t);
   h+='<div class="qtext'+(big?' big':q.t.length>150?' long':'')+'">'+esc(q.t)+'</div>';
   if(isCase)h+=caseCard(c);
+  if(!S.answered&&!S.revealed&&S.mode!=='exam'&&S.mode!=='blitz'&&!isCase)h+=howTo(c);
   if(q.kind==='num'&&S.hint&&!S.answered)h+='<div class="hintbox">'+esc(hintText(c))+'</div>';
   if(q.table)h+='<div class="tw" style="margin-top:16px">'+tableHtml(q.table)+'</div>';
   if(q.kind==='num'){
@@ -1167,6 +1170,22 @@ function viewPrac(){
     h+=reviewBits(c);}
   h+='</div></div>';
   return h;
+}
+/* объяснение приёма прямо в задаче: сначала этот приём, ниже — вся тема */
+function howTo(c){
+  var q=c.q,g=q.skill&&SKILL_GUIDES[q.skill],lc=learnCard(c.t),h='';
+  if(!g&&!lc)return '';
+  h+='<details class="disc"><summary>Как решать <small>'+esc(g?g.title:c.t.title)+'</small></summary><div class="db">';
+  if(g){
+    h+='<p class="learn-plain" style="font-size:15px">'+esc(g.plain)+'</p>';
+    if(g.steps&&g.steps.length)h+='<ol class="learn-list">'+lis(g.steps)+'</ol>';
+    if(g.example){h+='<div class="learn-example" style="margin-top:8px">';
+      if(typeof g.example==='string')h+='<div class="exq">'+esc(g.example)+'</div>';
+      else h+='<div class="exq">'+esc(g.example.q)+'</div><ol>'+lis(g.example.a)+'</ol>';
+      h+='</div>';}
+  }
+  if(lc)h+=g?'<details class="disc"><summary>Вся тема '+esc(c.t.num)+'</summary><div class="db">'+lc+'</div></details>':lc;
+  return h+'</div></details>';
 }
 function hintText(c){var q=c.q,k=KNOWLEDGE[c.t.id];return q.hint||(BANK.hints&&BANK.hints[q.id])||(q.skill&&SKILL_GUIDES[q.skill]&&SKILL_GUIDES[q.skill].steps[0])||(k&&k.hint)||c.t.method[0];}
 function tickItems(q){return (q.checklist&&q.checklist.length)?q.checklist:(q.model||[]);}
