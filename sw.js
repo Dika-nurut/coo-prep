@@ -1,5 +1,5 @@
-const CACHE = 'cooprep-v46';
-const ASSETS = ['./', './index.html', './bank.js?v=3.3', './expansion.js?v=3.2', './knowledge.js?v=1.10', './sprint.js?v=1.0', './hft.js?v=1.0', './teach.js?v=1.1', './tools.js?v=1.3', './hard.js?v=1.1', './base.js?v=1.0', './manifest.json', './icon-192.png', './icon-512.png'];
+const CACHE = 'cooprep-v47';
+const ASSETS = ['./', './index.html', './bank.js?v=3.3', './expansion.js?v=3.2', './knowledge.js?v=1.10', './sprint.js?v=1.0', './hft.js?v=1.0', './teach.js?v=1.1', './tools.js?v=1.3', './hard.js?v=1.2', './base.js?v=1.0', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).catch(() => {}));
