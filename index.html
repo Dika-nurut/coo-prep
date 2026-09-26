@@ -476,6 +476,7 @@ button:focus-visible,summary:focus-visible,textarea:focus-visible{outline:3px so
 <script src="teach.js?v=1.1"></script>
 <script src="tools.js?v=1.3"></script>
 <script src="hard.js?v=1.1"></script>
+<script src="base.js?v=1.0"></script>
 <script>
 (function(){
 "use strict";
@@ -522,6 +523,7 @@ var ACC={
   s:{l:'#0F9D6E',d:'#34D399',ll:'#0B7A55',dl:'#22B07F'},
   t:{l:'#DB2777',d:'#F472B6',ll:'#9D174D',dl:'#DB2777'},
   k:{l:'#0891B2',d:'#22D3EE',ll:'#0E7490',dl:'#0891B2'},
+  o:{l:'#EA580C',d:'#FB923C',ll:'#9A3412',dl:'#EA580C'},
   z:{l:'#E11D48',d:'#FB7185',ll:'#9F1239',dl:'#E11D48'},
   h:{l:'#4F46E5',d:'#818CF8',ll:'#3730A3',dl:'#6366F1'}
 };
@@ -619,6 +621,7 @@ function isLevelClean(q){var s=ST.q[q.id];return !!(s&&s.s==='ok'&&(s.lv||0)>=1)
 function tStat(t){var o=0,m=0,b=0;t.qs.forEach(function(q){
   if(isOk(q)){o++;if(isMas(q))m++;}else if(isBad(q))b++;});return{ok:o,m:m,bad:b,total:t.qs.length};}
 function levelStat(t){var a=[1,2,3,4,5].map(function(level){var all=0,done=0; t.qs.forEach(function(q){if((q.level||1)===level){all++;if(isLevelClean(q))done++;}});return{all:all,done:done};});return a;}
+function topLevel(t){var m=1;t.qs.forEach(function(q){if((q.level||1)>m)m=q.level||1;});return m;}
 function nextLevel(t){var a=levelStat(t);for(var i=0;i<a.length;i++)if(a[i].done<a[i].all)return i+1;return 0;}
 var SKILL_NAMES={
   m0_ten_percent:'10% через одну десятую',m0_half:'половина числа',m0_one_percent:'1% через одну сотую',m0_five_percent:'5% как половина от 10%',m0_quarter:'25% как четверть',m0_fifteen_percent:'15% как 10% и 5%',m0_times_five:'умножение на 5',m0_divide_five:'деление на 5',m0_fraction_quantity:'доля числа через части',m0_estimate:'прикидка порядка величины',
@@ -908,7 +911,7 @@ function render(){
 /* Четыре цели подготовки вместо одной длинной ленты: цифры, логика, кейсы, вопросы.
    Модуль, которого нет в списке, попадает в «Кейсы», чтобы ничего не потерялось. */
 var PILLARS=[
-  {id:'num',title:'Цифры',mods:['z','s','m','b','p'],intro:'Устный счёт, проценты, вероятность и бизнес-арифметика. Цель: считать вслух быстро и без ошибок, когда CEO даёт цифры на ходу.'},
+  {id:'num',title:'Цифры',mods:['o','z','s','m','b','p'],intro:'Устный счёт, проценты, вероятность и бизнес-арифметика. Цель: считать вслух быстро и без ошибок, когда CEO даёт цифры на ходу.'},
   {id:'logic',title:'Логика',mods:['l','c'],intro:'Последовательности, ограничения, правдолюбы и лжецы, стратегические загадки. Цель: спокойно разложить незнакомую задачу по шагам.'},
   {id:'cases',title:'Кейсы',mods:['h','j','pm'],strategy:true,intro:'HFT-бизнес фонда, мини-кейсы и управление проектом. Цель: отвечать структурой и цифрами, а не общими словами.'},
   {id:'talk',title:'Вопросы',mods:['t','k','f'],intro:'Урок «научи за 5 минут», инструменты PM, истории и английский. Цель: говорить уверенно и коротко.'}
@@ -1045,9 +1048,11 @@ function viewType(){
   var t=TBY[typeId],s=tStat(t),m=t._m;
   var h='<div class="wrap" style="'+accentStyle(m)+'">';
   h+='<div class="tsum"><span class="bd">'+esc(t.num)+'</span><span class="sub">Решено '+s.ok+' из '+s.total+' · с первой попытки '+s.m+(s.bad?' · <span style="color:var(--no)">на повтор '+s.bad+'</span>':'')+'</span></div>';
-  var ls=levelStat(t),nl=nextLevel(t)||5;
-  h+='<div class="lvls" aria-label="Прогресс по уровням">'+ls.map(function(x,i){
-    var c=(x.all&&x.done===x.all)?' done':(i+1===nl?' cur':'');
+  var ls=levelStat(t),nl=nextLevel(t)||topLevel(t);
+  var nlv=ls.filter(function(x){return x.all;}).length;
+  h+='<div class="lvls" style="grid-template-columns:repeat('+nlv+',1fr)" aria-label="Прогресс по уровням">'+ls.map(function(x,i){
+    if(!x.all)return '';
+    var c=(x.done===x.all)?' done':(i+1===nl?' cur':'');
     return '<div class="lvl'+c+'"><b>УР. '+(i+1)+'</b><span>'+x.done+'/'+x.all+'</span></div>';}).join('')+'</div>';
   h+='<div class="lvl-cap">'+esc(LEVEL_NAMES[nl])+'</div>';
   var lc=learnCard(t);
@@ -1082,8 +1087,8 @@ function viewType(){
 }
 function footType(){
   var t=TBY[typeId];if(!t)return '';
-  var nl=nextLevel(t),lv=nl||5,n=levelChunk(t,lv).length;
-  var label=(nl?(started(t)?'Продолжить':'Начать')+' · уровень '+lv:'Повторить уровень 5')+' · '+nz(n);
+  var nl=nextLevel(t),lv=nl||topLevel(t),n=levelChunk(t,lv).length;
+  var label=(nl?(started(t)?'Продолжить':'Начать')+' · уровень '+lv:'Повторить уровень '+lv)+' · '+nz(n);
   return '<div class="fin" style="'+accentStyle(t._m)+'"><button class="btn" onclick="A.startLevel(\''+t.id+'\','+lv+')">'+label+'</button></div>';
 }
 
